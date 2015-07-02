@@ -1,0 +1,13 @@
+---
+name: secureproxy
+packages: []
+templates:
+  bin/monit_debugger: bin/monit_debugger
+  bin/secureproxy_ctl: bin/secureproxy_ctl
+  config/secureproxy.conf.erb: config/secureproxy.conf
+  data/properties.sh.erb: data/properties.sh
+  helpers/ctl_setup.sh: helpers/ctl_setup.sh
+  helpers/ctl_utils.sh: helpers/ctl_utils.sh
+properties:
+  secureproxy.leader_address:
+    description: Hostname/IP to the leader/master of the cluster
