@@ -1,0 +1,103 @@
+# deployment cloudcontroller nginx.conf
+user  vcap vcap;
+
+error_log /var/vcap/sys/log/secureproxy/nginx.error.log;
+pid       /var/vcap/sys/run/secureproxy/secureproxy.pid;
+
+worker_rlimit_nofile 30000;
+
+events {
+  worker_connections 1024;
+}
+
+http {
+
+  ##
+  # Basic stuff
+  ##
+
+  sendfile on;
+  tcp_nopush on;
+  tcp_nodelay on;
+  keepalive_timeout 65;
+  types_hash_max_size 2048;
+
+  include /var/vcap/packages/nginx/conf/mime.types;
+  default_type application/octet-stream;
+  types {
+    text/plain log;
+    text/plain asc;
+  }
+
+  ##
+  # Logging
+  ##
+
+  log_format  main  '$remote_addr - [$time_local] "$request" '
+            '$status $body_bytes_sent "$http_referer" '
+            '"$http_user_agent" $request_time '
+            '$upstream_response_time $pipe';
+
+  access_log off;
+  error_log /var/vcap/sys/log/secureproxy/error.log;
+
+  ##
+  # Gzip
+  ##
+
+  gzip on;
+  gzip_disable "msie6";
+  gzip_vary on;
+  gzip_types  text/plain text/css application/x-javascript text/xml application/xml application/xml+rss text/javascript application/rss+xml;
+
+
+  ##
+  # Timeout variables (currently disabled)
+  ##
+
+  # client_header_timeout   10m;
+  # client_body_timeout 10m;
+  # send_timeout        10m;
+  # client_max_body_size 250m;
+
+  # connection_pool_size        256;
+  # client_header_buffer_size   16k;
+  # large_client_header_buffers 4 32k;
+  # request_pool_size       16k;
+
+  server {
+    listen    <%= p("secureproxy.listen_port") %>;
+    server_name  _;
+
+    # proxy all traffic
+    location / {
+
+      # redirect all http traffic to https
+      if ($http_x_forwarded_proto = http) {
+        return 301 https://$host$request_uri;
+      }
+      if ($scheme = http) {
+        return 301 https://$host$request_uri;
+      }
+
+      ##
+      # Security
+      ##
+
+      add_header X-Frame-Options DENY;
+      add_header X-Content-Type-Options nosniff;
+      add_header X-XSS-Protection "1; mode=block";
+      add_header Strict-Transport-Security 'max-age=31536000';
+
+      proxy_buffering             off;
+      proxy_set_header            Host $host;
+      proxy_set_header            X-Real_IP $remote_addr;
+      proxy_set_header            X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_redirect              off;
+      proxy_connect_timeout       10;
+      proxy_pass                  http://localhost:<%= p("secureproxy.proxy_port") %>;
+
+    }
+
+  }
+}
