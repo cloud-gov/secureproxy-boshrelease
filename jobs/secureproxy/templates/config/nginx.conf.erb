@@ -1,13 +1,16 @@
 # deployment cloudcontroller nginx.conf
 user  vcap vcap;
+worker_processes  2;
 
 error_log /var/vcap/sys/log/secureproxy/nginx.error.log;
 pid       /var/vcap/sys/run/secureproxy/secureproxy.pid;
 
-worker_rlimit_nofile 30000;
+worker_rlimit_nofile 40000;
 
 events {
-  worker_connections 1024;
+  worker_connections  8096;
+  multi_accept        on;
+  use                 epoll;
 }
 
 http {
@@ -38,6 +41,7 @@ http {
             '"$http_user_agent" $request_time '
             '$upstream_response_time $pipe';
 
+  # access_log /var/vcap/sys/log/secureproxy/access.log main;
   access_log off;
   error_log /var/vcap/sys/log/secureproxy/error.log;
 
@@ -74,9 +78,6 @@ http {
 
       # redirect all http traffic to https
       if ($http_x_forwarded_proto = http) {
-        return 301 https://$host$request_uri;
-      }
-      if ($scheme = http) {
         return 301 https://$host$request_uri;
       }
 
