@@ -1,0 +1,16 @@
+---
+packages:
+- name: nginx
+  version: 607109055b8e65b0b0dc9b7ec864058e4c6b991e
+  sha1: 53989916d3fc44fbb1353be4ba6b86b493c8ea36
+  fingerprint: 607109055b8e65b0b0dc9b7ec864058e4c6b991e
+  dependencies: []
+jobs:
+- name: secureproxy
+  version: dc9db79889c3ca279248bce7f749a1e30505730d
+  fingerprint: dc9db79889c3ca279248bce7f749a1e30505730d
+  sha1: d0691f37866ada5b7c391e4778f24333f5583a4b
+commit_hash: 0fe6e76c
+uncommitted_changes: true
+name: secureproxy
+version: '1'
