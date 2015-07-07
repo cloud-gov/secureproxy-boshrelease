@@ -1,1 +1,13 @@
---- {}
+---
+nginx/headers-more-v0.26.tar.gz:
+  object_id: e940764c-746f-47c2-9135-d832f12e6a86
+  sha: 02c01ba96677be6a18c39e2b3a325dcde52cedc0
+  size: 28033
+nginx/nginx-1.8.0.tar.gz:
+  object_id: 38c8cf10-4481-45ab-9397-8cb104e858bb
+  sha: 12bad312764feae50246685ab2e74512d1aa9b2f
+  size: 832104
+nginx/pcre-8.36.tar.gz:
+  object_id: 2fe6a26d-cd8d-4eee-a0fd-05a740ae0bd7
+  sha: fb537757756818133d8157ec878bc11f5a93ef4d
+  size: 2009464
