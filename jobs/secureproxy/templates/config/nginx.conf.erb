@@ -109,6 +109,7 @@ http {
       proxy_set_header            X-Real_IP $remote_addr;
       proxy_set_header            X-Forwarded-For $proxy_add_x_forwarded_for;
       proxy_redirect              off;
+      proxy_pass_request_headers  on;
       proxy_connect_timeout       10;
       proxy_pass                  http://localhost:<%= p("secureproxy.proxy_port") %>;
 
