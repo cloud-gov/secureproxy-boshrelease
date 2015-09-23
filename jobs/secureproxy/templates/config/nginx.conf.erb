@@ -81,8 +81,8 @@ http {
   }
 
   # Map X-Frame-Options
-  map $upstream_http_strict_transport_security $sts {
-    '' max-age=31536000;
+  map $upstream_http_x_frame_options $frameoptions {
+    '' DENY;
   }
 
   server {
@@ -101,7 +101,7 @@ http {
       # Security
       ##
 
-      add_header X-Frame-Options DENY;
+      add_header X-Frame-Options $frameoptions;
       add_header X-Content-Type-Options nosniff;
       add_header X-XSS-Protection "1; mode=block";
       add_header Strict-Transport-Security $sts;
