@@ -1,0 +1,67 @@
+---
+jobs:
+- name: build-secureproxy-release
+  plan:
+  - aggregate:
+    - get: release-git-repo
+      resource: secureproxy-release-git-repo
+      trigger: true
+    - get: pipeline-tasks
+    - get: final-builds-dir-tarball
+      resource: secureproxy-final-builds-dir-tarball
+    - get: releases-dir-tarball
+      resource: secureproxy-releases-dir-tarball
+  - task: finalize-release
+    file: pipeline-tasks/finalize-bosh-release.yml
+    params:
+      PRIVATE_YML_CONTENT: {{secureproxy-private-yml}}
+  - aggregate:
+    - put: secureproxy-release-tarball
+      params:
+        file: finalized-release/secureproxy-*.tgz
+    - put: secureproxy-final-builds-dir-tarball
+      params:
+        file: finalized-release/final-builds-dir-secureproxy.tgz
+    - put: secureproxy-releases-dir-tarball
+      params:
+        file: finalized-release/releases-dir-secureproxy.tgz
+
+resources:
+- name: pipeline-tasks
+  type: git
+  source:
+    uri: {{pipeline-tasks-git-url}}
+    branch: {{pipeline-tasks-git-branch}}
+
+- name: secureproxy-release-git-repo
+  type: git
+  source:
+    uri: {{secureproxy-release-git-url}}
+    branch: {{secureproxy-release-git-branch}}
+
+- name: secureproxy-release-tarball
+  type: s3
+  source:
+    bucket: {{s3-bosh-releases-bucket}}
+    regexp: secureproxy-(.*).tgz
+    access_key_id: {{s3-bosh-releases-access-key-id}}
+    secret_access_key: {{s3-bosh-releases-secret-access-key}}
+    region_name: {{aws-region}}
+
+- name: secureproxy-final-builds-dir-tarball
+  type: s3
+  source:
+    bucket: {{s3-bosh-releases-bucket}}
+    versioned_file: final-builds-dir-secureproxy.tgz
+    access_key_id: {{s3-bosh-releases-access-key-id}}
+    secret_access_key: {{s3-bosh-releases-secret-access-key}}
+    region_name: {{aws-region}}
+
+- name: secureproxy-releases-dir-tarball
+  type: s3
+  source:
+    bucket: {{s3-bosh-releases-bucket}}
+    versioned_file: releases-dir-secureproxy.tgz
+    access_key_id: {{s3-bosh-releases-access-key-id}}
+    secret_access_key: {{s3-bosh-releases-secret-access-key}}
+    region_name: {{aws-region}}
