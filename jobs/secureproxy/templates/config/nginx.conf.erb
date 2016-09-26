@@ -107,11 +107,14 @@ http {
       add_header X-XSS-Protection "1; mode=block";
       add_header Strict-Transport-Security $sts;
 
+      fastcgi_param               HTTP_PROXY "";
+
       proxy_buffering             off;
       proxy_http_version          1.1;
       proxy_set_header            Upgrade $http_upgrade;
       proxy_set_header            Connection $connection_upgrade;
       proxy_set_header            Host $host;
+      proxy_set_header            Proxy "";
       proxy_redirect              off;
       proxy_pass_request_headers  on;
       proxy_connect_timeout       10;
