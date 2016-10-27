@@ -76,14 +76,20 @@ http {
     ''      close;
   }
 
-  # Map STS for default
+  # Add secure header values if not set upstream, else add headers with the
+  # implicit default value of empty string, which is ignored by the `add_header`
+  # directive.
   map $upstream_http_strict_transport_security $sts {
     '' max-age=31536000;
   }
-
-  # Map X-Frame-Options
-  map $upstream_http_x_frame_options $frameoptions {
+  map $upstream_http_x_frame_options $frame_options {
     '' DENY;
+  }
+  map $upstream_http_x_content_type_options $content_type_options {
+    '' nosniff;
+  }
+  map $upstream_http_x_xss_protection $xss_protection {
+    '' '1; mode=block';
   }
 
   server {
@@ -102,10 +108,10 @@ http {
       # Security
       ##
 
-      add_header X-Frame-Options $frameoptions;
-      add_header X-Content-Type-Options nosniff;
-      add_header X-XSS-Protection "1; mode=block";
       add_header Strict-Transport-Security $sts;
+      add_header X-Frame-Options $frame_options;
+      add_header X-Content-Type-Options $content_type_options;
+      add_header X-XSS-Protection $xss_protection;
 
       fastcgi_param               HTTP_PROXY "";
 
