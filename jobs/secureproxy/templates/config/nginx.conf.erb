@@ -85,6 +85,9 @@ http {
   map $upstream_http_x_frame_options $frame_options {
     '' DENY;
   }
+  map $upstream_http_content_type $default_content_type {
+    '' 'text/plain; charset=utf-8';
+  }
   map $upstream_http_x_content_type_options $content_type_options {
     '' nosniff;
   }
@@ -110,6 +113,7 @@ http {
 
       add_header Strict-Transport-Security $sts;
       add_header X-Frame-Options $frame_options;
+      add_header Content-Type $default_content_type;
       add_header X-Content-Type-Options $content_type_options;
       add_header X-XSS-Protection $xss_protection;
 
