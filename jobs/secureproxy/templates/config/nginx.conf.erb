@@ -91,6 +91,9 @@ http {
   map $upstream_http_x_xss_protection $xss_protection {
     '' '1; mode=block';
   }
+  map $upstream_http_content_type $default_content_type {
+    '' 'text/plain; charset=utf-8';
+  }
 
   server {
     listen    <%= p("secureproxy.listen_port") %>;
@@ -112,6 +115,7 @@ http {
       add_header X-Frame-Options $frame_options always;
       add_header X-Content-Type-Options $content_type_options always;
       add_header X-XSS-Protection $xss_protection always;
+      add_header Content-Type $default_content_type always;
 
       fastcgi_param               HTTP_PROXY "";
 
