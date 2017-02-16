@@ -42,8 +42,7 @@ http {
             '"$http_user_agent" $request_time '
             '$upstream_response_time $pipe';
 
-  # access_log /var/vcap/sys/log/secureproxy/access.log main;
-  access_log off;
+  access_log /var/vcap/sys/log/secureproxy/access.log main;
   error_log /var/vcap/sys/log/secureproxy/error.log;
 
   ##
