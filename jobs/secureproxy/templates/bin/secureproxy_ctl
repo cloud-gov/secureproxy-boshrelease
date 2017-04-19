@@ -18,8 +18,8 @@ case $1 in
     # store pid in $PIDFILE
     echo $$ > $PIDFILE
 
-    exec /var/vcap/packages/nginx/sbin/nginx \
-         -c $JOB_DIR/config/nginx.conf
+    exec /var/vcap/packages/secureproxy/sbin/nginx \
+        -c $JOB_DIR/config/nginx.conf
     ;;
 
   stop)
