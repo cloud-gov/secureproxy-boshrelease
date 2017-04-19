@@ -1,7 +1,7 @@
 ---
 name: secureproxy
 packages:
-- nginx
+- secureproxy
 templates:
   bin/monit_debugger: bin/monit_debugger
   bin/secureproxy_ctl: bin/secureproxy_ctl
