@@ -16,3 +16,6 @@ properties:
     description: Listen to this port
   secureproxy.proxy_port:
     description: Proxy to this port
+  secureproxy.custom_server_config:
+    description: Custom nginx configuration to include in main http block
+    default: ""
