@@ -6,6 +6,9 @@ tar xzvf pcre-8.40.tar.gz
 echo "Extracting nginx..."
 tar xzvf nginx-1.10.3.tar.gz
 
+# make it clear when we respond it's our nginx, and not one further down the chain
+sed -i '' 's/\(Server: \)/\1cloud.gov secureproxy\//' src/http/ngx_http_header_filter_module.c
+
 echo "Building nginx..."
 pushd nginx-1.10.3
   ./configure \
