@@ -8,6 +8,9 @@ tar xzvf nginx-1.10.3.tar.gz
 
 echo "Building nginx..."
 pushd nginx-1.10.3
+  # make it clear when we respond it's our nginx, and not one further down the chain
+  sed -i '' 's/\(Server: \)/\1cloud.gov secureproxy\//' src/http/ngx_http_header_filter_module.c
+
   ./configure \
     --prefix=${BOSH_INSTALL_TARGET} \
     --with-pcre=../pcre-8.40
