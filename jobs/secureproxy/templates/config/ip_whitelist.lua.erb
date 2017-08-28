@@ -4,6 +4,7 @@ local whitelist = {}
 local human_whitelist = {}
 
 <% p("secureproxy.tic.whitelist", {}).each do |domain, ranges| %>
+  whitelist["<%= domain %>"] = {}
   <% ranges.each.with_index(1) do |range, index| %>
     whitelist["<%= domain %>"][<%= index %>] = "<%= range %>"
   <% end %>
