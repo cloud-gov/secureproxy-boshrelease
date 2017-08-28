@@ -1,10 +1,19 @@
 ---
 jobs:
+- name: test
+  plan:
+  - aggregate:
+    - get: secureproxy-release-git-repo
+    - get: libcidr-tarball
+  - task: test
+    file: secureproxy-release-git-repo/ci/test.yml
+
 - name: build-secureproxy-release
   plan:
   - aggregate:
     - get: release-git-repo
       resource: secureproxy-release-git-repo
+      passed: [test]
       trigger: true
     - get: pipeline-tasks
     - get: final-builds-dir-tarball
@@ -13,16 +22,20 @@ jobs:
       resource: secureproxy-releases-dir-tarball
   - task: finalize-release
     file: pipeline-tasks/finalize-bosh-release.yml
+    tags: [iaas]
     params:
       PRIVATE_YML_CONTENT: {{secureproxy-private-yml}}
   - aggregate:
     - put: secureproxy-release-tarball
+      tags: [iaas]
       params:
         file: finalized-release/secureproxy-*.tgz
     - put: secureproxy-final-builds-dir-tarball
+      tags: [iaas]
       params:
         file: finalized-release/final-builds-dir-secureproxy.tgz
     - put: secureproxy-releases-dir-tarball
+      tags: [iaas]
       params:
         file: finalized-release/releases-dir-secureproxy.tgz
 
@@ -36,35 +49,47 @@ resources:
 - name: secureproxy-release-git-repo
   type: git
   source:
-    uri: {{secureproxy-release-git-url}}
-    branch: {{secureproxy-release-git-branch}}
+    uri: https://github.com/18F/cg-secureproxy-boshrelease
+    branch: master
+
+- name: libcidr-tarball
+  type: file-url
+  source:
+    url: https://www.over-yonder.net/~fullermd/projects/libcidr/libcidr-1.2.3.tar.xz
+    filename: libcidr-1.2.3.tar.xz
 
 - name: secureproxy-release-tarball
-  type: s3
+  type: s3-iam
   source:
     bucket: {{s3-bosh-releases-bucket}}
     regexp: secureproxy-(.*).tgz
-    access_key_id: {{s3-bosh-releases-access-key-id}}
-    secret_access_key: {{s3-bosh-releases-secret-access-key}}
     region_name: {{aws-region}}
     server_side_encryption: AES256
 
 - name: secureproxy-final-builds-dir-tarball
-  type: s3
+  type: s3-iam
   source:
     bucket: {{s3-bosh-releases-bucket}}
     versioned_file: final-builds-dir-secureproxy.tgz
-    access_key_id: {{s3-bosh-releases-access-key-id}}
-    secret_access_key: {{s3-bosh-releases-secret-access-key}}
     region_name: {{aws-region}}
     server_side_encryption: AES256
 
 - name: secureproxy-releases-dir-tarball
-  type: s3
+  type: s3-iam
   source:
     bucket: {{s3-bosh-releases-bucket}}
     versioned_file: releases-dir-secureproxy.tgz
-    access_key_id: {{s3-bosh-releases-access-key-id}}
-    secret_access_key: {{s3-bosh-releases-secret-access-key}}
     region_name: {{aws-region}}
     server_side_encryption: AES256
+
+resource_types:
+- name: file-url
+  type: docker-image
+  source:
+    repository: pivotalservices/concourse-curl-resource
+    tag: latest
+
+- name: s3-iam
+  type: docker-image
+  source:
+    repository: 18fgsa/s3-resource

@@ -1,0 +1,8 @@
+set -e -x
+
+echo "Extracting libcidr..."
+tar xvf libcidr/libcidr-1.2.3.tar.xz
+pushd libcidr-1.2.3
+  make
+  PREFIX=${BOSH_INSTALL_TARGET} make install
+popd

@@ -1,0 +1,25 @@
+set -e -x
+
+echo "Extracting pcre..."
+PCRE_TARGET=$(mktemp -d)
+tar xzvf pcre-8* -C ${PCRE_TARGET}
+
+echo "Extracting nginx..."
+OPENRESTY_TARGET=$(mktemp -d)
+tar xzvf openresty-1* -C ${OPENRESTY_TARGET}
+
+echo "Building nginx..."
+pushd ${OPENRESTY_TARGET}/openresty*
+  ./configure \
+    --prefix=${BOSH_INSTALL_TARGET} \
+    --with-pcre=${PCRE_TARGET}/pcre*
+  make
+  make install
+popd
+
+echo "Adding libcidr-ffi..."
+# TODO: PR OPM to support installing modules from local sources
+cp lua-libcidr-ffi/lib/libcidr-ffi.lua ${BOSH_INSTALL_TARGET}/lualib/
+
+echo "Adding TIC..."
+cp tic/tic.lua ${BOSH_INSTALL_TARGET}/lualib
