@@ -50,7 +50,7 @@ resources:
   type: git
   source:
     uri: https://github.com/18F/cg-secureproxy-boshrelease
-    branch: master
+    branch: opentesty
 
 - name: libcidr-tarball
   type: file-url
