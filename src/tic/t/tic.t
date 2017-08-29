@@ -15,7 +15,7 @@ location = /t {
       whitelist={},
       host_whitelist={localhost={}},
       headers=ngx.req.get_headers(),
-      source_ip=ngx.var.remote_addr,
+      source_ips={ngx.var.remote_addr},
     })
     if not allow then
       return ngx.exit(ngx.HTTP_FORBIDDEN)
@@ -45,7 +45,7 @@ location = /t {
       whitelist=whitelist,
       host_whitelist={localhost={}},
       headers=ngx.req.get_headers(),
-      source_ip="10.0.0.1"
+      source_ips={"10.0.0.1"}
     })
     if not allow then
       return ngx.exit(ngx.HTTP_FORBIDDEN)
@@ -75,7 +75,7 @@ location = /t {
       whitelist=whitelist,
       host_whitelist={localhost={}},
       headers=ngx.req.get_headers(),
-      source_ip="10.0.0.1"
+      source_ips={"10.0.0.1"}
     })
     if not allow then
       return ngx.exit(ngx.HTTP_FORBIDDEN)
@@ -105,7 +105,7 @@ location = /t {
       whitelist=whitelist,
       host_whitelist={localhost={}},
       headers=ngx.req.get_headers(),
-      source_ip="10.0.7.1"
+      source_ips={"10.0.7.1"}
     })
     if not allow then
       return ngx.exit(ngx.HTTP_FORBIDDEN)
@@ -133,7 +133,7 @@ location = /t {
       whitelist=whitelist,
       host_whitelist={},
       headers=ngx.req.get_headers(),
-      source_ip="10.0.7.1"
+      source_ips={"10.0.7.1"}
     })
     if not allow then
       return ngx.exit(ngx.HTTP_FORBIDDEN)
@@ -164,7 +164,7 @@ location = /t {
       host_whitelist={localhost={"^/v2/info"}},
       request_uri="/v2/info",
       headers=ngx.req.get_headers(),
-      source_ip="10.0.7.1"
+      source_ips={"10.0.7.1"}
     })
     if not allow then
       return ngx.exit(ngx.HTTP_FORBIDDEN)
@@ -194,7 +194,7 @@ location = /t {
       whitelist=whitelist,
       host_whitelist={localhost={}},
       headers=ngx.req.get_headers(),
-      source_ip="2001:db8:0:0:0:0:0:1"
+      source_ips={"2001:db8:0:0:0:0:0:1"}
     })
     if not allow then
       return ngx.exit(ngx.HTTP_FORBIDDEN)
@@ -224,7 +224,7 @@ location = /t {
       whitelist=whitelist,
       host_whitelist={localhost={}},
       headers=ngx.req.get_headers(),
-      source_ip="2001:db8:1:0:0:0:0:1"
+      source_ips={"2001:db8:1:0:0:0:0:1"}
     })
     if not allow then
       return ngx.exit(ngx.HTTP_FORBIDDEN)

@@ -54,16 +54,28 @@ function _M.check_ingress(opts)
     return true, email
   end
 
-  local passed = false
-  local source_ip = cidr.from_str(opts["source_ip"])
-  for _, range in ipairs(opts["whitelist"][email[2]]) do
-    if cidr.contains(cidr.from_str(range), source_ip) then
-      passed = true
-      break
+  -- TODO: Make this work
+  -- if ip_in_cidrs(opts["source_ips"], opts["global_whitelist"]) then
+  --   return true, email
+  -- end
+
+  for _, source_ip in ipairs(opts["source_ips"]) do
+    parsed_ip = cidr.from_str(source_ip)
+    if not ip_in_cidrs(parsed_ip, opts["whitelist"][email[2]]) then
+      do return false, email end
     end
   end
 
-  return passed, email
+  return true, email
+end
+
+function ip_in_cidrs(source_ip, cidrs)
+  for _, range in ipairs(cidrs) do
+    if cidr.contains(cidr.from_str(range), source_ip) then
+      do return true end
+    end
+  end
+  return false
 end
 
 return _M
