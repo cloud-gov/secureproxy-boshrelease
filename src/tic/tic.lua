@@ -13,10 +13,12 @@ function _M.check_ingress(opts)
   end
 
   local host_whitelist = opts["host_whitelist"][hostname]
+  -- if host not protected, then bail
   if not host_whitelist then
     return true, {}
   end
 
+  -- if path not protected, then bail
   for _, pattern in ipairs(host_whitelist) do
     if ngx.re.match(opts["request_uri"], pattern) then
       do return true, {} end
@@ -54,15 +56,20 @@ function _M.check_ingress(opts)
     return true, email
   end
 
-  -- TODO: Make this work
-  -- if ip_in_cidrs(opts["source_ips"], opts["global_whitelist"]) then
-  --   return true, email
-  -- end
+  if #source_ips then
 
-  for _, source_ip in ipairs(opts["source_ips"]) do
-    parsed_ip = cidr.from_str(source_ip)
+    local parsed_ip = cidr.from_str(source_ip[1])
+    -- if client IP not in domain whitelist, reject request
     if not ip_in_cidrs(parsed_ip, opts["whitelist"][email[2]]) then
-      do return false, email end
+      return false, email
+    end
+
+    if #source_ips > 1 then
+      local parsed_ip = cidr.from_str(source_ip[2])
+      -- if passed tic.secret check, ip must match global_whitelist
+      if not ip_in_cidrs(parsed_ip, ops["global_whitelist"]) then
+        return false, email
+      end
     end
   end
 

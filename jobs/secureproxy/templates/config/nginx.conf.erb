@@ -175,7 +175,8 @@ http {
             source_ips[1] = xffl[#xffl]
           end
           if #xffl > 1 and headers["X-TIC-Secret"] == "<% p('secureproxy.tic.secret') %>" then
-            source_ips[#source_ips] = xffl[#xffl - 1]
+            source_ips[1] = xffl[#xffl - 1]
+            source_ips[2] = xffl[#xffl]
           end
         end
 
