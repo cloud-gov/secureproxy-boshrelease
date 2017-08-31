@@ -35,8 +35,8 @@ properties:
       exclude:
       - ^/v2/info
     default: []
-  secureproxy.tic.global_whitelist:
-    description: List of globally whitelisted addresses
+  secureproxy.tic.proxy_whitelist:
+    description: List of trusted proxy addresses
     default: []
     example:
     - 192.0.2.0/24

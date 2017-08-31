@@ -11,11 +11,11 @@ init_by_lua_block {
 --- config
 location = /t {
   access_by_lua_block {
-    allow, email = tic.check_ingress({
+    allow, filtered, source_ip, email = tic.check_ingress({
       whitelist={},
       host_whitelist={localhost={}},
       headers=ngx.req.get_headers(),
-      source_ips={ngx.var.remote_addr},
+      source_ip=ngx.var.remote_addr,
     })
     if not allow then
       return ngx.exit(ngx.HTTP_FORBIDDEN)
@@ -41,11 +41,11 @@ use MIME::Base64;
 location = /t {
   access_by_lua_block {
     whitelist={["gsa.gov"]={"10.0.0.0/24"}}
-    allow, email = tic.check_ingress({
+    allow, filtered, source_ip, email = tic.check_ingress({
       whitelist=whitelist,
       host_whitelist={localhost={}},
       headers=ngx.req.get_headers(),
-      source_ips={"10.0.0.1"}
+      source_ip="10.0.0.1"
     })
     if not allow then
       return ngx.exit(ngx.HTTP_FORBIDDEN)
@@ -71,11 +71,11 @@ use MIME::Base64;
 location = /t {
   access_by_lua_block {
     whitelist={["gsa.gov"]={"10.0.0.0/24"}}
-    allow, email = tic.check_ingress({
+    allow, filtered, source_ip, email = tic.check_ingress({
       whitelist=whitelist,
       host_whitelist={localhost={}},
       headers=ngx.req.get_headers(),
-      source_ips={"10.0.0.1"}
+      source_ip="10.0.0.1"
     })
     if not allow then
       return ngx.exit(ngx.HTTP_FORBIDDEN)
@@ -101,11 +101,11 @@ use MIME::Base64;
 location = /t {
   access_by_lua_block {
     whitelist={["gsa.gov"]={"10.0.0.0/24"}}
-    allow, email = tic.check_ingress({
+    allow, filtered, source_ip, email = tic.check_ingress({
       whitelist=whitelist,
       host_whitelist={localhost={}},
       headers=ngx.req.get_headers(),
-      source_ips={"10.0.7.1"}
+      source_ip="10.0.7.1"
     })
     if not allow then
       return ngx.exit(ngx.HTTP_FORBIDDEN)
@@ -129,11 +129,11 @@ use MIME::Base64;
 location = /t {
   access_by_lua_block {
     whitelist={["gsa.gov"]={"10.0.0.0/24"}}
-    allow, email = tic.check_ingress({
+    allow, filtered, source_ip, email = tic.check_ingress({
       whitelist=whitelist,
       host_whitelist={},
       headers=ngx.req.get_headers(),
-      source_ips={"10.0.7.1"}
+      source_ip="10.0.7.1"
     })
     if not allow then
       return ngx.exit(ngx.HTTP_FORBIDDEN)
@@ -159,12 +159,12 @@ use MIME::Base64;
 location = /t {
   access_by_lua_block {
     whitelist={["gsa.gov"]={"10.0.0.0/24"}}
-    allow, email = tic.check_ingress({
+    allow, filtered, source_ip, email = tic.check_ingress({
       whitelist=whitelist,
       host_whitelist={localhost={"^/v2/info"}},
       request_uri="/v2/info",
       headers=ngx.req.get_headers(),
-      source_ips={"10.0.7.1"}
+      source_ip="10.0.7.1"
     })
     if not allow then
       return ngx.exit(ngx.HTTP_FORBIDDEN)
@@ -190,11 +190,11 @@ use MIME::Base64;
 location = /t {
   access_by_lua_block {
     whitelist={["gsa.gov"]={"2001:db8::/60"}}
-    allow, email = tic.check_ingress({
+    allow, filtered, source_ip, email = tic.check_ingress({
       whitelist=whitelist,
       host_whitelist={localhost={}},
       headers=ngx.req.get_headers(),
-      source_ips={"2001:db8:0:0:0:0:0:1"}
+      source_ip="2001:db8:0:0:0:0:0:1"
     })
     if not allow then
       return ngx.exit(ngx.HTTP_FORBIDDEN)
@@ -220,11 +220,11 @@ use MIME::Base64;
 location = /t {
   access_by_lua_block {
     whitelist={["gsa.gov"]={"2001:db8::/60"}}
-    allow, email = tic.check_ingress({
+    allow, filtered, source_ip, email = tic.check_ingress({
       whitelist=whitelist,
       host_whitelist={localhost={}},
       headers=ngx.req.get_headers(),
-      source_ips={"2001:db8:1:0:0:0:0:1"}
+      source_ip="2001:db8:1:0:0:0:0:1"
     })
     if not allow then
       return ngx.exit(ngx.HTTP_FORBIDDEN)
