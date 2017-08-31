@@ -7,13 +7,13 @@ local cidr = require "libcidr-ffi"
 
 function _M.check_ingress(opts)
   -- where is the request coming from
-  local auth = opts["headers"]["Authorization"];
+  local auth = opts["headers"]["authorization"]
   local client_ip = opts["source_ip"]
-  local xff = opts["headers"]["X-Forwarded-For"]
+  local xff = opts["headers"]["x-forwarded-for"]
   local proxy_ip
 
   -- where is the request going to
-  local hostname = opts["headers"]["Host"]
+  local hostname = opts["headers"]["host"]
   local port = hostname:find(":")
 
   -- strip port from hostname
@@ -70,15 +70,15 @@ function _M.check_ingress(opts)
   if xff ~= nil then
     local xffl, err = ngx_re.split(xff, ", ")
     if xffl ~= nil then
-      client_ip = xffl[#xffl]
+      client_ip = xffl[#xffl]:match("^%s(.+)%s$")
 
       -- if we have X-Client-IP header and can check + trust X-TIC-Secret header then
       -- 1. use X-Client-IP as client_ip for domain ip_whitelist validation
       -- 2. check last value in X-Forwarded-For against proxy_whitelist
-      if opts["headers"]["X-Client-IP"] ~= nil and opts["tic_secret"] ~= nil then
-        if opts["headers"]["X-TIC-Secret"] == opts["tic_secret"] then
-          client_ip = opts["headers"]["X-Client-IP"]
-          proxy_ip = xffl[#xffl]
+      if opts["headers"]["x-client-ip"] ~= nil and opts["tic_secret"] ~= nil then
+        if opts["headers"]["x-tic-secret"]:match("^%s(.)+%s$") == opts["tic_secret"] then
+          client_ip = opts["headers"]["x-client-ip"]:match("^%s(.+)%s$")
+          proxy_ip = xffl[#xffl]:match("^%s(.+)%s$")
         end
       end
 
