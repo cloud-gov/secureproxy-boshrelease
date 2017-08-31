@@ -1,0 +1,4 @@
+---
+name: libcidr
+files:
+- libcidr/libcidr-1.2.3.tar.xz

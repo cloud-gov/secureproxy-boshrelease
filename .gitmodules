@@ -1,0 +1,6 @@
+[submodule "src/lua-resty-iputils"]
+	path = src/lua-resty-iputils
+	url = https://github.com/hamishforbes/lua-resty-iputils
+[submodule "src/lua-libcidr-ffi"]
+	path = src/lua-libcidr-ffi
+	url = https://github.com/GUI/lua-libcidr-ffi

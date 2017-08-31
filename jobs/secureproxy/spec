@@ -2,11 +2,12 @@
 name: secureproxy
 packages:
 - secureproxy
+- libcidr
 templates:
   bin/monit_debugger: bin/monit_debugger
   bin/secureproxy_ctl: bin/secureproxy_ctl
   config/nginx.conf.erb: config/nginx.conf
-  data/properties.sh.erb: data/properties.sh
+  config/ip_whitelist.lua.erb: config/ip_whitelist.lua
   helpers/ctl_setup.sh: helpers/ctl_setup.sh
   helpers/ctl_utils.sh: helpers/ctl_utils.sh
   bin/drain: bin/drain
@@ -19,3 +20,26 @@ properties:
   secureproxy.custom_server_config:
     description: Custom nginx configuration to include in main http block
     default: ""
+
+  secureproxy.tic.whitelist:
+    description: Hash mapping email domains to lists of whitelisted CIDRs
+    example:
+      foo.gov:
+      - 192.0.2.0/24
+      - 198.51.100.101/32
+    default: {}
+  secureproxy.tic.host_whitelist:
+    description: List of hostnames to include in TIC filter
+    example:
+    - hostname: api.fr.cloud.gov
+      exclude:
+      - ^/v2/info
+    default: []
+  secureproxy.tic.global_whitelist:
+    description: List of globally whitelisted addresses
+    default: []
+    example:
+    - 192.0.2.0/24
+    - 198.51.100.101/32
+  secureproxy.tic.secret:
+    description: Shared secret for trusted forwarded addresses

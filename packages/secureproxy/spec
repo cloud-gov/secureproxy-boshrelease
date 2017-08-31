@@ -1,0 +1,7 @@
+---
+name: secureproxy
+files:
+- pcre-8*
+- openresty-1*
+- lua-libcidr-ffi/lib/libcidr-ffi.lua
+- tic/tic.lua
