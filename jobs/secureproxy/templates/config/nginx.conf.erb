@@ -154,47 +154,32 @@ http {
       ##
 
       access_by_lua_block {
-        local headers = ngx.req.get_headers()
+        local tic_secret = "<% p('secureproxy.tic.secret') %>"
 
-        -- bail fast if we don't have a whitelist, or it's not a hostname that needs filtering
+        -- bail fast if we don't have a whitelist
         if ip_whitelist_size == 0 then
           return
         end
 
-        -- TODO: Move into module and test
-        -- where is the request coming from
-        local source_ips = {ngx.var.remote_addr}
-
-        -- if we have an X-Forwarded-For header then use the last one in the list instead of remote_addr
-        -- Note: This is only safe to use behind a load balancer that appends the client IP to X-Forwarded-For;
-        -- see http://docs.aws.amazon.com/elasticloadbalancing/latest/classic/x-forwarded-headers.html#x-forwarded-for
-        local xff = headers["X-Forwarded-For"]
-        if xff ~= nil then
-          local xffl, err = ngx_re.split(xff, ", ")
-            if xffl ~= nil then
-            source_ips[1] = xffl[#xffl]
-          end
-          if #xffl > 1 and headers["X-TIC-Secret"] == "<% p('secureproxy.tic.secret') %>" then
-            source_ips[1] = xffl[#xffl - 1]
-            source_ips[2] = xffl[#xffl]
-          end
-        end
-
-        allow, email = tic.check_ingress({
+        allow, whitelist, source_ip, email = tic.check_ingress({
           whitelist=ip_whitelist,
           global_whitelist=global_whitelist,
           host_whitelist=host_whitelist,
           request_uri=ngx.var.request_uri,
-          headers=headers,
-          source_ips=source_ips
+          source_ip=ngx.var.remote_addr,
+          tic_secret=tic_secret,
+          headers=ngx.req.get_headers()
         })
 
+        if not whitelist then
+          return
+        end
         if allow then
-          ngx.log(ngx.NOTICE, "PASS ", source_ips, " is in ", email[2], " whitelist (", email[1], email[2], ")")
+          ngx.log(ngx.NOTICE, "PASS ", source_ip, " is in ", email[2], " whitelist (", email[1], email[2], ")")
           return
         else
           -- fail if the request isn't coming from a whitelisted range
-          ngx.log(ngx.NOTICE, "FAIL ", source_ips, " is not in ", email[2], " whitelist (", email[1], email[2], ")")
+          ngx.log(ngx.NOTICE, "FAIL ", source_ip, " is not in ", email[2], " whitelist (", email[1], email[2], ")")
           ngx.status = ngx.HTTP_FORBIDDEN
           ngx.header.content_type = "application/json; charset=utf-8"
           -- TODO: Should we be more informative in our error message, should we use a stock cloud controller error code
