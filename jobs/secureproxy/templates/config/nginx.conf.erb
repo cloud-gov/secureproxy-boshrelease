@@ -154,7 +154,7 @@ http {
       ##
 
       access_by_lua_block {
-        local tic_secret = "<% p('secureproxy.tic.secret') %>"
+        local tic_secret = "<%= p('secureproxy.tic.secret') %>"
 
         -- bail fast if we don't have a whitelist
         if ip_whitelist_size == 0 then
@@ -162,7 +162,7 @@ http {
         end
 
         allow, filtered, source_ip, email = tic.check_ingress({
-          whitelist=ip_whitelist,
+          ip_whitelist=ip_whitelist,
           proxy_whitelist=proxy_whitelist,
           host_whitelist=host_whitelist,
           request_uri=ngx.var.request_uri,
