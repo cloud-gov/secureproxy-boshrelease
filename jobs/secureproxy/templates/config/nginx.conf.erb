@@ -154,22 +154,25 @@ http {
       ##
 
       access_by_lua_block {
-        local tic_secret = "<%= p('secureproxy.tic.secret') %>"
-
         -- bail fast if we don't have a whitelist
         if ip_whitelist_size == 0 then
           return
         end
 
-        allow, filtered, source_ip, email = tic.check_ingress({
+        local opts = {
           ip_whitelist=ip_whitelist,
           proxy_whitelist=proxy_whitelist,
           host_whitelist=host_whitelist,
           request_uri=ngx.var.request_uri,
           source_ip=ngx.var.remote_addr,
-          tic_secret=tic_secret,
           headers=ngx.req.get_headers()
-        })
+        }
+
+        <% if_p('secureproxy.tic.secret') do |secret| %>
+        opts.tic_secret = "<%= secret %>"
+        <% end %>
+
+        allow, filtered, source_ip, email = tic.check_ingress(opts)
 
         if not filtered then
           return

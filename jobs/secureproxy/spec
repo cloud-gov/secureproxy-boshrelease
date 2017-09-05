@@ -42,4 +42,4 @@ properties:
     - 192.0.2.0/24
     - 198.51.100.101/32
   secureproxy.tic.secret:
-    description: Shared secret for trusted forwarded addresses
+    description: Shared secret for trusted forwarded addresses. Disabled by default.
