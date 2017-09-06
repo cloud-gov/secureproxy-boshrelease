@@ -19,6 +19,11 @@ local host_whitelist = {}
   <% end %>
 <% end %>
 
+local proxy_whitelist = {}
+<% p("secureproxy.tic.proxy_whitelist", []).each.with_index(1) do |range, index| %>
+  proxy_whitelist[<%= index %>] = "<%= range %>"
+<% end %>
+
 function _M.get_whitelist()
   return whitelist
 end
@@ -29,6 +34,10 @@ end
 
 function _M.get_host_whitelist()
   return host_whitelist
+end
+
+function _M.get_proxy_whitelist()
+  return proxy_whitelist
 end
 
 return _M

@@ -49,8 +49,8 @@ resources:
 - name: secureproxy-release-git-repo
   type: git
   source:
-    uri: https://github.com/18F/cg-secureproxy-boshrelease
-    branch: opentesty
+    uri: {{secureproxy-release-git-url}}
+    branch: {{secureproxy-release-git-branch}}
 
 - name: libcidr-tarball
   type: file-url
