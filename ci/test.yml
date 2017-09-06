@@ -1,0 +1,14 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: talentappstore/openresty-test
+
+inputs:
+- name: secureproxy-release-git-repo
+- name: libcidr-tarball
+
+run:
+  path: secureproxy-release-git-repo/ci/test.sh

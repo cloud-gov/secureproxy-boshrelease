@@ -3,7 +3,8 @@
 set -e # exit immediately if a simple command exits with a non-zero status
 set -u # report the usage of uninitialized variables
 
-source /var/vcap/jobs/secureproxy/helpers/ctl_setup.sh 'secureproxy'
+
+source /var/vcap/jobs/secureproxy-old/helpers/ctl_setup.sh 'secureproxy-old'
 
 PIDFILE=$RUN_DIR/$JOB_NAME.pid
 
@@ -17,10 +18,8 @@ case $1 in
     # store pid in $PIDFILE
     echo $$ > $PIDFILE
 
-    exec \
-      env LD_LIBRARY_PATH="${LD_LIBRARY_PATH:-}:/var/vcap/packages/libcidr/lib" \
-      /var/vcap/packages/secureproxy/bin/openresty \
-      -c $JOB_DIR/config/nginx.conf
+    exec /var/vcap/packages/secureproxy-old/sbin/nginx \
+        -c $JOB_DIR/config/nginx.conf
     ;;
 
   stop)

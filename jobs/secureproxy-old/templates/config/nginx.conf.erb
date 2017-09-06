@@ -1,8 +1,9 @@
+# deployment cloudcontroller nginx.conf
 user  vcap vcap;
 worker_processes  2;
 
-error_log /var/vcap/sys/log/secureproxy/secureproxy.error.log notice;
-pid       /var/vcap/sys/run/secureproxy/secureproxy.pid;
+error_log /var/vcap/sys/log/secureproxy-old/nginx.error.log;
+pid       /var/vcap/sys/run/secureproxy-old/secureproxy.pid;
 
 worker_rlimit_nofile 40000;
 
@@ -25,7 +26,7 @@ http {
   types_hash_max_size 2048;
   server_tokens off;
 
-  include /var/vcap/packages/secureproxy/nginx/conf/mime.types;
+  include /var/vcap/packages/secureproxy-old/conf/mime.types;
   default_type application/octet-stream;
   types {
     text/plain log;
@@ -41,7 +42,8 @@ http {
             '"$http_user_agent" $request_time '
             '$upstream_response_time $pipe';
 
-  access_log /var/vcap/sys/log/secureproxy/access.log main;
+  access_log /var/vcap/sys/log/secureproxy-old/access.log main;
+  error_log /var/vcap/sys/log/secureproxy-old/error.log;
 
   ##
   # Gzip
@@ -92,43 +94,8 @@ http {
     '' 'text/plain; charset=utf-8';
   }
 
-  lua_package_path "/var/vcap/packages/secureproxy/lualib/?.lua;/var/vcap/jobs/secureproxy/config/?.lua";
-
-  # hack to enable startup logging
-  # https://github.com/openresty/lua-nginx-module/issues/467#issuecomment-305578531
-  lua_shared_dict workaround 12k;
-
-  init_by_lua_block {
-    cjson = require "cjson"
-    ngx_re = require "ngx.re"
-    tic = require "tic"
-    local whitelist = require "ip_whitelist"
-
-    ip_whitelist = whitelist.get_whitelist()
-    host_whitelist = whitelist.get_host_whitelist()
-    proxy_whitelist = whitelist.get_proxy_whitelist()
-
-    ip_whitelist_size = 0
-
-    local info = ""
-    for k,v in pairs(whitelist.get_human_whitelist()) do
-      ip_whitelist_size = ip_whitelist_size + 1
-      info = info..k..":\n"
-
-      for kk, vv in ipairs(v) do
-        info = info.."- "..vv.."\n"
-      end
-    end
-
-    info = "Loaded ip_whitelist for "..ip_whitelist_size.." domains:\n"..info
-    ngx.log(ngx.NOTICE, info)
-    ngx.log(ngx.NOTICE, cjson.encode(ip_whitelist))
-  }
-
   server {
-    listen <%= p("secureproxy.listen_port") %>;
-    set $local_proxy "http://127.0.0.1:<%= p("secureproxy.proxy_port") %>";
-
+    listen    <%= p("secureproxy.listen_port") %>;
     server_name  _;
 
     # proxy all traffic
@@ -149,48 +116,6 @@ http {
       add_header X-XSS-Protection $xss_protection always;
       add_header Content-Type $default_content_type always;
 
-      ##
-      # Implement per-domain IP Whitelist
-      ##
-
-      access_by_lua_block {
-        -- bail fast if we don't have a whitelist
-        if ip_whitelist_size == 0 then
-          return
-        end
-
-        local opts = {
-          ip_whitelist=ip_whitelist,
-          proxy_whitelist=proxy_whitelist,
-          host_whitelist=host_whitelist,
-          request_uri=ngx.var.request_uri,
-          source_ip=ngx.var.remote_addr,
-          headers=ngx.req.get_headers()
-        }
-
-        <% if_p('secureproxy.tic.secret') do |secret| %>
-        opts.tic_secret = "<%= secret %>"
-        <% end %>
-
-        allow, filtered, source_ip, email = tic.check_ingress(opts)
-
-        if not filtered then
-          return
-        end
-        if allow then
-          ngx.log(ngx.NOTICE, "PASS ", source_ip, " is in ", email[2], " whitelist (", email[1], email[2], ")")
-          return
-        else
-          -- fail if the request isn't coming from a whitelisted range
-          ngx.log(ngx.NOTICE, "FAIL ", source_ip, " is not in ", email[2], " whitelist (", email[1], email[2], ")")
-          ngx.status = ngx.HTTP_FORBIDDEN
-          ngx.header.content_type = "application/json; charset=utf-8"
-          -- TODO: Should we be more informative in our error message, should we use a stock cloud controller error code
-          ngx.say(cjson.encode({description="Authorization Error", error_code="SecureProxy-NotAuthorized", code=9162}))
-          return ngx.exit(ngx.HTTP_FORBIDDEN)
-        end
-      }
-
       fastcgi_param               HTTP_PROXY "";
 
       proxy_buffering             off;
@@ -203,7 +128,7 @@ http {
       proxy_pass_request_headers  on;
       proxy_connect_timeout       10;
       proxy_read_timeout          600;
-      proxy_pass                  $local_proxy;
+      proxy_pass                  http://localhost:<%= p("secureproxy.proxy_port") %>;
 
     }
 

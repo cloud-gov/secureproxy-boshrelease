@@ -1,0 +1,43 @@
+local _M = {}
+
+local whitelist = {}
+local human_whitelist = {}
+
+<% p("secureproxy.tic.whitelist", {}).each do |domain, ranges| %>
+  whitelist["<%= domain %>"] = {}
+  <% ranges.each.with_index(1) do |range, index| %>
+    whitelist["<%= domain %>"][<%= index %>] = "<%= range %>"
+  <% end %>
+  human_whitelist["<%= domain %>"]={"<%= ranges.join('", "') %>"}
+<% end %>
+
+local host_whitelist = {}
+<% p("secureproxy.tic.host_whitelist", []).each do |host| %>
+  host_whitelist["<%= host["hostname"] %>"] = {}
+  <% host["exclude"].each.with_index(1) do |path, index| %>
+    host_whitelist["<%= host["hostname"] %>"][<%= index %>] = "<%= path %>"
+  <% end %>
+<% end %>
+
+local proxy_whitelist = {}
+<% p("secureproxy.tic.proxy_whitelist", []).each.with_index(1) do |range, index| %>
+  proxy_whitelist[<%= index %>] = "<%= range %>"
+<% end %>
+
+function _M.get_whitelist()
+  return whitelist
+end
+
+function _M.get_human_whitelist()
+  return human_whitelist
+end
+
+function _M.get_host_whitelist()
+  return host_whitelist
+end
+
+function _M.get_proxy_whitelist()
+  return proxy_whitelist
+end
+
+return _M
