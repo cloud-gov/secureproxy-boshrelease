@@ -130,6 +130,7 @@ http {
     set $local_proxy "http://127.0.0.1:<%= p("secureproxy.proxy_port") %>";
 
     server_name  _;
+    more_clear_headers 'Server';
 
     # proxy all traffic
     location / {
