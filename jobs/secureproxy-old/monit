@@ -1,5 +1,0 @@
-check process secureproxy
-  with pidfile /var/vcap/sys/run/secureproxy-old/secureproxy.pid
-  start program "/var/vcap/jobs/secureproxy-old/bin/monit_debugger secureproxy_ctl '/var/vcap/jobs/secureproxy-old/bin/secureproxy_ctl start'"
-  stop program "/var/vcap/jobs/secureproxy-old/bin/monit_debugger secureproxy_ctl '/var/vcap/jobs/secureproxy-old/bin/secureproxy_ctl stop'"
-  group vcap
