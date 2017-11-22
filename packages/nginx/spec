@@ -1,5 +1,0 @@
----
-name: secureproxy-old
-files:
-- pcre-8.41.tar.gz
-- nginx-1.10.3.tar.gz
