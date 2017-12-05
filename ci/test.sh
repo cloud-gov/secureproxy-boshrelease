@@ -2,8 +2,7 @@
 
 set -eux
 
-tar xvf libcidr-tarball/libcidr-1.2.3.tar.xz
-pushd libcidr-1.2.3
+pushd libcidr-git
   make
   make install
 popd
