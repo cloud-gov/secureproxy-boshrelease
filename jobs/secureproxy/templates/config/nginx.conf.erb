@@ -80,6 +80,7 @@ http {
     '' 'max-age=31536000';
   }
   map $upstream_http_x_frame_options $frame_options {
+    default    '$upstream_http_x_frame_options';
     ''         'DENY';
     'ALLOWALL' '';
   }
