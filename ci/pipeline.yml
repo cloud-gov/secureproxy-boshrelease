@@ -25,7 +25,7 @@ jobs:
     file: pipeline-tasks/finalize-bosh-release.yml
     tags: [iaas]
     params:
-      PRIVATE_YML_CONTENT: {{secureproxy-private-yml}}
+      PRIVATE_YML_CONTENT: ((secureproxy-private-yml))
   - in_parallel:
     - put: secureproxy-release-tarball
       tags: [iaas]
@@ -44,14 +44,14 @@ resources:
 - name: pipeline-tasks
   type: git
   source:
-    uri: {{pipeline-tasks-git-url}}
-    branch: {{pipeline-tasks-git-branch}}
+    uri: ((pipeline-tasks-git-url))
+    branch: ((pipeline-tasks-git-branch))
 
 - name: secureproxy-release-git-repo
   type: git
   source:
-    uri: {{secureproxy-release-git-url}}
-    branch: {{secureproxy-release-git-branch}}
+    uri: ((secureproxy-release-git-url))
+    branch: ((secureproxy-release-git-branch))
 
 - name: libcidr-git
   type: git
@@ -62,25 +62,25 @@ resources:
 - name: secureproxy-release-tarball
   type: s3-iam
   source:
-    bucket: {{s3-bosh-releases-bucket}}
+    bucket: ((s3-bosh-releases-bucket))
     regexp: secureproxy-(.*).tgz
-    region_name: {{aws-region}}
+    region_name: ((aws-region))
     server_side_encryption: AES256
 
 - name: secureproxy-final-builds-dir-tarball
   type: s3-iam
   source:
-    bucket: {{s3-bosh-releases-bucket}}
+    bucket: ((s3-bosh-releases-bucket))
     versioned_file: final-builds-dir-secureproxy.tgz
-    region_name: {{aws-region}}
+    region_name: ((aws-region))
     server_side_encryption: AES256
 
 - name: secureproxy-releases-dir-tarball
   type: s3-iam
   source:
-    bucket: {{s3-bosh-releases-bucket}}
+    bucket: ((s3-bosh-releases-bucket))
     versioned_file: releases-dir-secureproxy.tgz
-    region_name: {{aws-region}}
+    region_name: ((aws-region))
     server_side_encryption: AES256
 
 resource_types:
