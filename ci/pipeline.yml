@@ -2,7 +2,7 @@
 jobs:
 - name: test
   plan:
-  - aggregate:
+  - in_parallel:
     - get: secureproxy-release-git-repo
       trigger: true
     - get: libcidr-git
@@ -11,7 +11,7 @@ jobs:
 
 - name: build-secureproxy-release
   plan:
-  - aggregate:
+  - in_parallel:
     - get: release-git-repo
       resource: secureproxy-release-git-repo
       passed: [test]
@@ -26,7 +26,7 @@ jobs:
     tags: [iaas]
     params:
       PRIVATE_YML_CONTENT: {{secureproxy-private-yml}}
-  - aggregate:
+  - in_parallel:
     - put: secureproxy-release-tarball
       tags: [iaas]
       params:
