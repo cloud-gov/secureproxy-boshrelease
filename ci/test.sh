@@ -3,6 +3,7 @@
 set -eux
 
 apt update
+export PERL_MM_USE_DEFAULT=1
 apt install -y build-essential && cpan -T -i Test::Nginx
 pushd libcidr-git
   make
