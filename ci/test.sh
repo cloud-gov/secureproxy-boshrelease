@@ -2,6 +2,8 @@
 
 set -eux
 
+apt update
+apt install -y build-essential && cpan -T -i Test::Nginx
 pushd libcidr-git
   make
   make install
