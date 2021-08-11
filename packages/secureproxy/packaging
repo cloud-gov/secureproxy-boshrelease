@@ -8,14 +8,40 @@ echo "Extracting nginx..."
 OPENRESTY_TARGET=$(mktemp -d)
 tar xzvf openresty-1* -C ${OPENRESTY_TARGET}
 
-echo "Building nginx..."
-pushd ${OPENRESTY_TARGET}/openresty*
-  ./configure \
-    --prefix=${BOSH_INSTALL_TARGET} \
-    --with-pcre=${PCRE_TARGET}/pcre*
-  make
-  make install
-popd
+codename=$(lsb_release -sc)
+case "$codename" in
+xenial)
+  echo "Runnng $codename packaging script"
+  (
+  echo "Building nginx..."
+  pushd ${OPENRESTY_TARGET}/openresty*
+    ./configure \
+      --prefix=${BOSH_INSTALL_TARGET} \
+      --with-pcre=${PCRE_TARGET}/pcre*
+    make
+    make install
+  popd
+  )
+  ;;
+bionic)
+  echo "Runnng $codename packaging script"
+  (
+  echo "Building nginx..."
+  pushd ${OPENRESTY_TARGET}/openresty*
+    ./configure \
+      --prefix=${BOSH_INSTALL_TARGET} \
+      --with-pcre \
+      --with-pcre-jit
+    make
+    make install
+  popd  )
+  ;;
+*)
+  echo "This version of the BOSH Stemcell ($codename) is not supported!"
+  lsb_release --all | sed -e 's/^/  /'
+  exit 1
+  ;;
+esac
 
 echo "Adding libcidr-ffi..."
 # TODO: PR OPM to support installing modules from local sources
