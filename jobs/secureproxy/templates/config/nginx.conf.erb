@@ -128,8 +128,16 @@ http {
   }
 
   server {
+  if_p('secureproxy.http_proxy') do
     listen <%= p("secureproxy.listen_port") %>;
     set $local_proxy "http://127.0.0.1:<%= p("secureproxy.proxy_port") %>";
+  else
+    listen <%= p("secureproxy.listen_port") %> ssl;
+    ssl_certificate cert.crt;
+    ssl_certificate_key priv.key;
+    set $local_proxy "https://127.0.0.1:<%= p("secureproxy.proxy_port") %>";
+  end
+
 
     server_name  _;
     more_clear_headers 'Server';
@@ -197,7 +205,11 @@ http {
         end
       }
 
+    if_p('secureproxy.http_proxy') do
       fastcgi_param               HTTP_PROXY "";
+    else
+      fastcgi_param               HTTPS_PROXY "";
+    end
 
       proxy_buffering             off;
       proxy_buffer_size           16k;

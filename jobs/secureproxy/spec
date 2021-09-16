@@ -7,6 +7,8 @@ templates:
   bin/monit_debugger: bin/monit_debugger
   bin/secureproxy_ctl: bin/secureproxy_ctl
   config/nginx.conf.erb: config/nginx.conf
+  config/cert.crt.erb: config/cert.crt
+  config/priv.key.erb: config/priv.key
   config/ip_whitelist.lua.erb: config/ip_whitelist.lua
   helpers/ctl_setup.sh: helpers/ctl_setup.sh
   helpers/ctl_utils.sh: helpers/ctl_utils.sh
@@ -15,8 +17,16 @@ templates:
 properties:
   secureproxy.listen_port:
     description: Listen to this port
+  secureproxy.http_proxy:
+    description: Have secureproxy default to HTTP front to back
   secureproxy.proxy_port:
     description: Proxy to this port
+
+  secureproxy.tls_cert:
+    description: Cert file for nginx to use for SSL front end
+  secureproxy.tls_key:
+    description: Key file for nginx to use for SSL front end
+
   secureproxy.custom_server_config:
     description: Custom nginx configuration to include in main http block
     default: ""
