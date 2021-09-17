@@ -127,7 +127,7 @@ http {
     ngx.log(ngx.NOTICE, cjson.encode(ip_whitelist))
   }
 
-<% if p('secureproxy.listen_port') %>
+<% if_p("secureproxy.listen_port") do |httpconfig| %>
   server {
 
     listen <%= p("secureproxy.listen_port") %>;
@@ -220,7 +220,7 @@ http {
 
 <% end %>
 
-<% if p('secureproxy.https_listen_port') %>
+<% if_p("secureproxy.listen_port") do |httpsconfig| %>
 server {
 
   listen <%= p("secureproxy.https_listen_port") %> ssl;
