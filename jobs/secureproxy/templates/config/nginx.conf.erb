@@ -127,20 +127,11 @@ http {
     ngx.log(ngx.NOTICE, cjson.encode(ip_whitelist))
   }
 
+<% if p('secureproxy.listen_port') %>
   server {
 
-<% if_p("secureproxy.listen_port") do |http_port| %>
-    listen <%= http_port %>;
+    listen <%= p("secureproxy.listen_port") %>;
     set $local_proxy "http://127.0.0.1:<%= p("secureproxy.proxy_port") %>";
-<% end %>
-
-<% if_p("secureproxy.https_listen_port") do |https_port| %>
-    listen <%= https_port %> ssl;
-    ssl_certificate cert.crt;
-    ssl_certificate_key priv.key;
-    set $local_proxy "https://127.0.0.1:<%= p("secureproxy.https_proxy_port") %>";
-<% end %>
-
     server_name  _;
     more_clear_headers 'Server';
 
@@ -207,11 +198,7 @@ http {
         end
       }
 
-    <% if p('secureproxy.proxy_port') %>
       fastcgi_param               HTTP_PROXY "";
-    <% else %>
-      fastcgi_param               HTTPS_PROXY "";
-    <% end %>
 
       proxy_buffering             off;
       proxy_buffer_size           16k;
@@ -230,6 +217,104 @@ http {
     }
 
   }
+
+<% end %>
+
+<% if p('secureproxy.https_listen_port') %>
+server {
+
+  listen <%= p("secureproxy.https_listen_port") %> ssl;
+  ssl_certificate cert.crt;
+  ssl_certificate_key priv.key;
+  set $local_proxy "https://127.0.0.1:<%= p("secureproxy.https_proxy_port") %>";
+  server_name  _;
+  more_clear_headers 'Server';
+
+  # proxy all traffic
+  location / {
+
+    # redirect all http traffic to https
+    if ($http_x_forwarded_proto = http) {
+      return 301 https://$host$request_uri;
+    }
+
+    ##
+    # Security
+    ##
+
+    add_header Strict-Transport-Security $sts always;
+    add_header X-Content-Type-Options $content_type_options always;
+    add_header X-XSS-Protection $xss_protection always;
+    add_header Content-Type $default_content_type always;
+
+    # Clear X-Frame-Options before setting so that ALLOWALL is cleared if set
+    more_clear_headers X-Frame-Options;
+    more_set_headers "X-Frame-Options: $frame_options";
+
+    ##
+    # Implement per-domain IP Whitelist
+    ##
+
+    access_by_lua_block {
+      -- bail fast if we don't have a whitelist
+      if ip_whitelist_size == 0 then
+        return
+      end
+
+      local opts = {
+        ip_whitelist=ip_whitelist,
+        proxy_whitelist=proxy_whitelist,
+        host_whitelist=host_whitelist,
+        request_uri=ngx.var.request_uri,
+        source_ip=ngx.var.remote_addr,
+        headers=ngx.req.get_headers()
+      }
+
+      <% if_p('secureproxy.tic.secret') do |secret| %>
+      opts.tic_secret = "<%= secret %>"
+      <% end %>
+
+      allow, filtered, source_ip, email = tic.check_ingress(opts)
+
+      if not filtered then
+        return
+      end
+      if allow then
+        ngx.log(ngx.NOTICE, "PASS ", source_ip, " is in ", email[2], " whitelist (", email[1], email[2], ")")
+        return
+      else
+        -- fail if the request isn't coming from a whitelisted range
+        ngx.log(ngx.NOTICE, "FAIL ", source_ip, " is not in ", email[2], " whitelist (", email[1], email[2], ")")
+        ngx.status = ngx.HTTP_FORBIDDEN
+        ngx.header.content_type = "application/json; charset=utf-8"
+        -- TODO: Should we be more informative in our error message, should we use a stock cloud controller error code
+        ngx.say(cjson.encode({description="Authorization Error", error_code="SecureProxy-NotAuthorized", code=9162}))
+        return ngx.exit(ngx.HTTP_FORBIDDEN)
+      end
+    }
+
+    fastcgi_param               HTTPS_PROXY "";
+
+    proxy_buffering             off;
+    proxy_buffer_size           16k;
+    proxy_buffers               4 16k;
+    proxy_http_version          1.1;
+    proxy_set_header            Upgrade $http_upgrade;
+    proxy_set_header            Connection $connection_upgrade;
+    proxy_set_header            Host $host;
+    proxy_set_header            Proxy "";
+    proxy_redirect              off;
+    proxy_pass_request_headers  on;
+    proxy_connect_timeout       10;
+    proxy_read_timeout          600;
+    proxy_pass                  $local_proxy;
+
+  }
+
+}
+<% end %>
+
+
 
   <%= p("secureproxy.custom_server_config") %>
 
