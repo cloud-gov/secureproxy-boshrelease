@@ -15,12 +15,15 @@ templates:
   bin/drain: bin/drain
 
 properties:
-  secureproxy.listen_port:
-    description: Listen to this port
-  secureproxy.http_proxy:
-    description: Have secureproxy default to HTTP front to back
-  secureproxy.proxy_port:
-    description: Proxy to this port
+  secureproxy.http_listen_port:
+    description: Listen to this port via HTTP
+  secureproxy.https_listen_port:
+    description: Listen to this port via HTTPS
+  secureproxy.http_proxy_port:
+    description: HTTP proxy to this port
+  secureproxy.https_proxy_port:
+    description: HTTPS proxy to this port
+
 
   secureproxy.tls_cert:
     description: Cert file for nginx to use for SSL front end
