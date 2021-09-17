@@ -15,11 +15,11 @@ templates:
   bin/drain: bin/drain
 
 properties:
-  secureproxy.http_listen_port:
+  secureproxy.listen_port:
     description: Listen to this port via HTTP
   secureproxy.https_listen_port:
     description: Listen to this port via HTTPS
-  secureproxy.http_proxy_port:
+  secureproxy.proxy_port:
     description: HTTP proxy to this port
   secureproxy.https_proxy_port:
     description: HTTPS proxy to this port
