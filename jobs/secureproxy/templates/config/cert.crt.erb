@@ -1,3 +1,5 @@
-<% if_p("secureproxy.tls_cert") do |tls_cert|
-    <% tls_cert %>
+<% if_p("secureproxy.tls_cert") do |tls_certs| %>
+<% tls_certs.each do |tls_cert| %>
+<%= tls_cert %>
+<% end %>
 <% end %>
