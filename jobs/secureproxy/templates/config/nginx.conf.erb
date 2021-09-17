@@ -220,7 +220,7 @@ http {
 
 <% end %>
 
-<% if_p("secureproxy.listen_port") do |httpsconfig| %>
+<% if_p("secureproxy.https_listen_port") do |httpsconfig| %>
 server {
 
   listen <%= p("secureproxy.https_listen_port") %> ssl;
