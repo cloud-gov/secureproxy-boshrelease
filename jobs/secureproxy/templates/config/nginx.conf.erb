@@ -129,20 +129,16 @@ http {
 
   server {
 
-<% if_p("secureproxy.listen_port") do |http_ports| %>
-    <% http_ports.each do |http_port| %>
+<% if_p("secureproxy.listen_port") do |http_port| %>
     listen <%= http_port %>;
     set $local_proxy "http://127.0.0.1:<%= p("secureproxy.proxy_port") %>";
-    <% end %>
 <% end %>
 
-<% if_p("secureproxy.https_listen_port") do |https_ports| %>
-    <% https_ports.each do |https_port| %>
+<% if_p("secureproxy.https_listen_port") do |https_port| %>
     listen <%= https_port %> ssl;
     ssl_certificate cert.crt;
     ssl_certificate_key priv.key;
     set $local_proxy "https://127.0.0.1:<%= p("secureproxy.https_proxy_port") %>";
-    <% end %>
 <% end %>
 
     server_name  _;
