@@ -207,11 +207,11 @@ http {
         end
       }
 
-    <% if_p('secureproxy.proxy_port') do
+    <% if p('secureproxy.proxy_port') %>
       fastcgi_param               HTTP_PROXY "";
-    end.else do
+    <% else %>
       fastcgi_param               HTTPS_PROXY "";
-    end %>
+    <% end %>
 
       proxy_buffering             off;
       proxy_buffer_size           16k;
