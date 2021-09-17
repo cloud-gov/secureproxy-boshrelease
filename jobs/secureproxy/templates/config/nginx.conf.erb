@@ -209,7 +209,7 @@ http {
 
     <% if_p('secureproxy.proxy_port') do
       fastcgi_param               HTTP_PROXY "";
-    else
+    end.else do
       fastcgi_param               HTTPS_PROXY "";
     end %>
 
