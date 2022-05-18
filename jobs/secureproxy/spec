@@ -56,3 +56,17 @@ properties:
     - 198.51.100.101/32
   secureproxy.tic.secret:
     description: Shared secret for trusted forwarded addresses. Disabled by default.
+  secureproxy.csp.enable:
+    description: Should any content security policy logic be enabled
+    default: false
+  secureproxy.csp.report_only:
+    description: Should content security policy violations be reported without enforcement
+    default: true
+  secureproxy.csp.report_uri:
+    description: Uri to sent content security policy violation reports to
+  secureproxy.csp.host_patterns:
+    description: Patterns for hostnames that should have content security policy headers added when not present
+    default: []
+    example:
+    - '*.app.example.gov'
+    - me.example.gov

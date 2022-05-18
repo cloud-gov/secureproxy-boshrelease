@@ -11,7 +11,15 @@ events {
   multi_accept        on;
   use                 epoll;
 }
-
+<% 
+  csp_header = 'content-security-policy'
+  csp_header_ref = 'upstream_http_content_security_policy'
+  report_only = p('secureproxy.csp.report_only')
+  if report_only
+    csp_header = 'content-security-policy-report-only'
+    csp_header_ref = 'http_content_security_policy_report_only'
+  end
+%>
 http {
 
   ##
@@ -95,6 +103,24 @@ http {
   map $upstream_http_content_type $default_content_type {
     '' 'text/plain; charset=utf-8';
   }
+
+  <% if p('secureproxy.csp.enable') %>
+  # right now, we're doing this with report-only. later, we'll drop report-only and move to enforce with report
+  map $<%= csp_header_ref %> $new_content_security_policy {
+    # set the policy if it's unset
+    "" "default-src 'none'; img-src 'self'; script-src 'self'; style-src 'self'; object-src 'none'; report-uri '<%= p('secureproxy.csp.report_uri') %>';";
+    default $<%= csp_header_ref %>;
+  }
+
+  map $host $new_content_security_policy {
+    # set it to our modified value if it's one of our hosts
+    <% p('secureproxy.csp.host_patterns').each do |host_pattern| %>
+    '<%= host_pattern %>' '$new_content_security_policy';
+    <% end %>
+    # don't mess with anyone else's csp
+    default $http_content_security_policy_report_only
+  }
+  <% end %>
 
   lua_package_path "/var/vcap/packages/secureproxy/lualib/?.lua;/var/vcap/jobs/secureproxy/config/?.lua";
 
@@ -253,6 +279,11 @@ server {
     more_clear_headers X-Frame-Options;
     more_set_headers "X-Frame-Options: $frame_options";
 
+    <% if p('secureproxy.csp.enable') %>
+    # we need to clear the header because doubling headers creates the strictest combination of them
+    more_clear_headers <%= csp_header %>;
+    more_set_headers "<%= csp_header %> $new_content_security_policy";
+    <% end %>
     ##
     # Implement per-domain IP Whitelist
     ##
