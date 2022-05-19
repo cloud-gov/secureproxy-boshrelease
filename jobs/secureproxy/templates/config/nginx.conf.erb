@@ -31,6 +31,7 @@ http {
   tcp_nodelay on;
   keepalive_timeout 1200;
   types_hash_max_size 2048;
+  map_hash_bucket_size 128;
   server_tokens off;
 
   client_body_temp_path /var/vcap/data/secureproxy/client_data;
@@ -118,7 +119,7 @@ http {
     '<%= host_pattern %>' '$new_content_security_policy';
     <% end %>
     # don't mess with anyone else's csp
-    default $http_content_security_policy_report_only
+    default $http_content_security_policy_report_only;
   }
   <% end %>
 
