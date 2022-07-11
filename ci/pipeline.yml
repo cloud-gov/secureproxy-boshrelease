@@ -46,12 +46,14 @@ resources:
   source:
     uri: ((pipeline-tasks-git-url))
     branch: ((pipeline-tasks-git-branch))
+    commit_verification_keys: ((cloud-gov-pgp-keys))
 
 - name: secureproxy-release-git-repo
   type: git
   source:
     uri: ((secureproxy-release-git-url))
     branch: ((secureproxy-release-git-branch))
+    commit_verification_keys: ((cloud-gov-pgp-keys))
 
 - name: libcidr-git
   type: git
