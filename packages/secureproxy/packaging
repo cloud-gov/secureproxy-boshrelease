@@ -36,6 +36,19 @@ bionic)
     make install
   popd  )
   ;;
+jammy)
+  echo "Runnng $codename packaging script"
+  (
+  echo "Building nginx..."
+  pushd ${OPENRESTY_TARGET}/openresty*
+    ./configure \
+      --prefix=${BOSH_INSTALL_TARGET} \
+      --with-pcre \
+      --with-pcre-jit
+    make
+    make install
+  popd  )
+  ;;
 *)
   echo "This version of the BOSH Stemcell ($codename) is not supported!"
   lsb_release --all | sed -e 's/^/  /'
