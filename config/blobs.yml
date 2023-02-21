@@ -2,11 +2,11 @@ libcidr/libcidr-1.2.3.tar.xz:
   size: 155144
   object_id: 8af20069-a5f3-43d3-7ef8-268b21085f5c
   sha: 092bf19ff2b3b3765fc002710d2cd1842ae5baae
-openresty-1.13.6.2.tar.gz:
-  size: 4635916
-  object_id: 8c7d1f6b-507f-4e47-6100-7169a3f89662
-  sha: sha256:946e1958273032db43833982e2cec0766154a9b5cb8e67868944113208ff2942
-pcre-8.41.tar.gz:
-  size: 2068775
-  object_id: 3e897822-0a33-4fca-7177-38956963eeaa
-  sha: dddf0995aefe04cc6267c1448ffef0e7b0560ec0
+openresty-1.21.4.1.tar.gz:
+  size: 5345817
+  object_id: ab1baa99-a821-4eea-4c4f-c2c4b36dcd3c
+  sha: sha256:0c5093b64f7821e85065c99e5d4e6cc31820cfd7f37b9a0dec84209d87a2af99
+pcre-8.45.tar.gz:
+  size: 2096552
+  object_id: 718c9e6b-b6ed-4349-7e59-c2305f8051b0
+  sha: sha256:4e6ce03e0336e8b4a3d6c2b70b1c5e18590a5673a98186da90d4f33c23defc09
