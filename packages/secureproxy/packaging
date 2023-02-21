@@ -43,7 +43,7 @@ jammy)
   pushd ${OPENRESTY_TARGET}/openresty*
     ./configure \
       --prefix=${BOSH_INSTALL_TARGET} \
-      --with-pcre=${PCRE_TARGET}/pcre \
+      --with-pcre=${PCRE_TARGET}/pcre* \
       --with-pcre-jit
     make
     make install
