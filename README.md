@@ -14,8 +14,8 @@ To use this BOSH release, first upload it to your BOSH:
 
 ```
 bosh target BOSH_HOST
-git clone https://github.com/18f/secureproxy-boshrelease.git
-cd newrelic-boshrelease
+git clone https://github.com/cloud-gov/cg-secureproxy-boshrelease.git
+cd cg-secureproxy-boshrelease
 bosh upload release releases/secureproxy/secureproxy-5.yml
 ```
 
