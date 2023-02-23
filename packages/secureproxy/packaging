@@ -11,7 +11,7 @@ tar xzvf openresty-1* -C ${OPENRESTY_TARGET}
 codename=$(lsb_release -sc)
 case "$codename" in
 xenial)
-  echo "Runnng $codename packaging script"
+  echo "Running $codename packaging script"
   (
   echo "Building nginx..."
   pushd ${OPENRESTY_TARGET}/openresty*
@@ -24,13 +24,26 @@ xenial)
   )
   ;;
 bionic)
-  echo "Runnng $codename packaging script"
+  echo "Running $codename packaging script"
   (
   echo "Building nginx..."
   pushd ${OPENRESTY_TARGET}/openresty*
     ./configure \
       --prefix=${BOSH_INSTALL_TARGET} \
       --with-pcre \
+      --with-pcre-jit
+    make
+    make install
+  popd  )
+  ;;
+jammy)
+  echo "Running $codename packaging script"
+  (
+  echo "Building nginx..."
+  pushd ${OPENRESTY_TARGET}/openresty*
+    ./configure \
+      --prefix=${BOSH_INSTALL_TARGET} \
+      --with-pcre=${PCRE_TARGET}/pcre* \
       --with-pcre-jit
     make
     make install
