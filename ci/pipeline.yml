@@ -5,7 +5,6 @@ jobs:
   - in_parallel:
     - get: secureproxy-release-git-repo
       trigger: true
-    - get: libcidr-tarball
   - task: test
     file: secureproxy-release-git-repo/ci/test.yml
 
