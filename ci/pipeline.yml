@@ -1,10 +1,18 @@
 ---
 jobs:
-- name: test
+
+- name: set-self
   plan:
-  - in_parallel:
     - get: secureproxy-release-git-repo
       trigger: true
+    - set_pipeline: self
+      file: config/ci/pipeline.yml
+
+- name: test
+  plan:
+  - get: secureproxy-release-git-repo
+    trigger: true
+    passed: [set-self]
   - task: test
     file: secureproxy-release-git-repo/ci/test.yml
 
@@ -24,7 +32,14 @@ jobs:
     file: pipeline-tasks/finalize-bosh-release.yml
     tags: [iaas]
     params:
-      PRIVATE_YML_CONTENT: ((secureproxy-private-yml))
+      PRIVATE_YML_CONTENT: |-
+        ---
+        blobstore:
+          options:
+            server_side_encryption: ((s3-bosh-blobstore-info.server_side_encryption))
+            region: ((s3-bosh-blobstore-info.region))
+            bucket_name: ((s3-bosh-blobstore-info.bucket_name))
+            credentials_source: ((s3-bosh-blobstore-info.credentials_source))
   - in_parallel:
     - put: secureproxy-release-tarball
       tags: [iaas]
@@ -43,15 +58,15 @@ resources:
 - name: pipeline-tasks
   type: git
   source:
-    uri: ((pipeline-tasks-git-url))
-    branch: ((pipeline-tasks-git-branch))
+    uri: https://github.com/cloud-gov/cg-pipeline-tasks.git
+    branch: master
     commit_verification_keys: ((cloud-gov-pgp-keys))
 
 - name: secureproxy-release-git-repo
   type: git
   source:
-    uri: ((secureproxy-release-git-url))
-    branch: ((secureproxy-release-git-branch))
+    uri: https://github.com/cloud-gov/cg-secureproxy-boshrelease.git
+    branch: main
     commit_verification_keys: ((cloud-gov-pgp-keys))
 
 - name: secureproxy-release-tarball
