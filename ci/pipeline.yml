@@ -55,12 +55,6 @@ resources:
     branch: ((secureproxy-release-git-branch))
     commit_verification_keys: ((cloud-gov-pgp-keys))
 
-- name: libcidr-tarball
-  type: file-url
-  source:
-    url: https://www.over-yonder.net/~fullermd/projects/libcidr/libcidr-1.2.3.tar.xz
-    filename: libcidr-1.2.3.tar.xz
-
 - name: secureproxy-release-tarball
   type: s3-iam
   source:
@@ -85,12 +79,15 @@ resources:
     region_name: ((aws-region))
     server_side_encryption: AES256
 
-resource_types:
-- name: file-url
-  type: docker-image
+- name: libcidr-tarball
+  type: s3-iam
   source:
-    repository: pivotalservices/concourse-curl-resource
-    tag: latest
+    bucket: s3-blobstore-bucket
+    versioned_file: 8af20069-a5f3-43d3-7ef8-268b21085f5c
+    region_name: ((aws-region))
+    server_side_encryption: AES256
+
+resource_types:
 
 - name: s3-iam
   type: docker-image
