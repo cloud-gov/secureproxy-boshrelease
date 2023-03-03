@@ -79,14 +79,6 @@ resources:
     region_name: ((aws-region))
     server_side_encryption: AES256
 
-- name: libcidr-tarball
-  type: s3-iam
-  source:
-    bucket: s3-blobstore-bucket
-    versioned_file: 8af20069-a5f3-43d3-7ef8-268b21085f5c
-    region_name: ((aws-region))
-    server_side_encryption: AES256
-
 resource_types:
 
 - name: s3-iam

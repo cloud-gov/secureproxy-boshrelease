@@ -9,7 +9,6 @@ image_resource:
 
 inputs:
 - name: secureproxy-release-git-repo
-- name: libcidr-tarball
 
 run:
   path: secureproxy-release-git-repo/ci/test.sh
