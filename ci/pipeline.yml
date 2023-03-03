@@ -6,7 +6,7 @@ jobs:
     - get: secureproxy-release-git-repo
       trigger: true
     - set_pipeline: self
-      file: config/ci/pipeline.yml
+      file: secureproxy-release-git-repo/ci/pipeline.yml
 
 - name: test
   plan:
