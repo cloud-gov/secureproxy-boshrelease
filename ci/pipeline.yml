@@ -7,8 +7,6 @@ jobs:
       trigger: true
     - set_pipeline: self
       file: config/ci/pipeline.yml
-      var_files:
-        - config/ci/config.yml
 
 - name: test
   plan:
@@ -60,14 +58,14 @@ resources:
 - name: pipeline-tasks
   type: git
   source:
-    uri: https://github.com/18f/cg-pipeline-tasks.git
+    uri: https://github.com/cloud-gov/cg-pipeline-tasks.git
     branch: master
     commit_verification_keys: ((cloud-gov-pgp-keys))
 
 - name: secureproxy-release-git-repo
   type: git
   source:
-    uri: https://github.com/18F/cg-secureproxy-boshrelease.git
+    uri: https://github.com/cloud-gov/cg-secureproxy-boshrelease.git
     branch: main
     commit_verification_keys: ((cloud-gov-pgp-keys))
 
