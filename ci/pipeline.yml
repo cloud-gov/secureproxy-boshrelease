@@ -5,7 +5,6 @@ jobs:
   - in_parallel:
     - get: secureproxy-release-git-repo
       trigger: true
-    - get: libcidr-git
   - task: test
     file: secureproxy-release-git-repo/ci/test.yml
 
@@ -55,12 +54,6 @@ resources:
     branch: ((secureproxy-release-git-branch))
     commit_verification_keys: ((cloud-gov-pgp-keys))
 
-- name: libcidr-git
-  type: git
-  source:
-    uri: https://github.com/wikimedia/analytics-libcidr.git
-    branch: master
-
 - name: secureproxy-release-tarball
   type: s3-iam
   source:
@@ -86,11 +79,6 @@ resources:
     server_side_encryption: AES256
 
 resource_types:
-- name: file-url
-  type: docker-image
-  source:
-    repository: pivotalservices/concourse-curl-resource
-    tag: latest
 
 - name: s3-iam
   type: docker-image
