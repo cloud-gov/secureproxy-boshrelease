@@ -5,6 +5,8 @@ set -eux
 apt update
 export PERL_MM_USE_DEFAULT=1
 apt install -y build-essential && cpan -T -i Test::Nginx
+
+tar xvf libcidr-tarball/libcidr-1.2.3.tar.xz
 pushd libcidr-git
   make
   make install

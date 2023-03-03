@@ -5,7 +5,7 @@ jobs:
   - in_parallel:
     - get: secureproxy-release-git-repo
       trigger: true
-    - get: libcidr-git
+    - get: libcidr-tarball
   - task: test
     file: secureproxy-release-git-repo/ci/test.yml
 
@@ -55,11 +55,11 @@ resources:
     branch: ((secureproxy-release-git-branch))
     commit_verification_keys: ((cloud-gov-pgp-keys))
 
-- name: libcidr-git
-  type: git
+- name: libcidr-tarball
+  type: file-url
   source:
-    uri: https://github.com/wikimedia/analytics-libcidr.git
-    branch: master
+    url: https://www.over-yonder.net/~fullermd/projects/libcidr/libcidr-1.2.3.tar.xz
+    filename: libcidr-1.2.3.tar.xz
 
 - name: secureproxy-release-tarball
   type: s3-iam
