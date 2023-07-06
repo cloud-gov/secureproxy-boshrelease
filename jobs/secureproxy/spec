@@ -12,7 +12,6 @@ templates:
   config/ip_whitelist.lua.erb: config/ip_whitelist.lua
   helpers/ctl_setup.sh: helpers/ctl_setup.sh
   helpers/ctl_utils.sh: helpers/ctl_utils.sh
-  bin/drain: bin/drain
 
 properties:
   secureproxy.listen_port:
