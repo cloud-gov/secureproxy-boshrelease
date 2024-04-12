@@ -1,5 +1,6 @@
 user  vcap vcap;
-worker_processes  2;
+# `auto` sets to 1/CPU
+worker_processes  auto;
 
 error_log /var/vcap/sys/log/secureproxy/secureproxy.error.log notice;
 pid       /var/vcap/sys/run/secureproxy/secureproxy.pid;
@@ -7,11 +8,11 @@ pid       /var/vcap/sys/run/secureproxy/secureproxy.pid;
 worker_rlimit_nofile 40000;
 
 events {
-  worker_connections  8096;
+  worker_connections  32768;
   multi_accept        on;
   use                 epoll;
 }
-<% 
+<%
   csp_header = 'content-security-policy'
   csp_header_ref = 'upstream_http_content_security_policy'
   report_only = p('secureproxy.csp.report_only')
