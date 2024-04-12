@@ -1,6 +1,5 @@
 user  vcap vcap;
-# `auto` sets to 1/CPU
-worker_processes  auto;
+worker_processes 4;
 
 error_log /var/vcap/sys/log/secureproxy/secureproxy.error.log notice;
 pid       /var/vcap/sys/run/secureproxy/secureproxy.pid;
@@ -8,7 +7,7 @@ pid       /var/vcap/sys/run/secureproxy/secureproxy.pid;
 worker_rlimit_nofile 40000;
 
 events {
-  worker_connections  32768;
+  worker_connections  16383;
   multi_accept        on;
   use                 epoll;
 }
