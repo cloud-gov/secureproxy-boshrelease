@@ -180,12 +180,6 @@ http {
       add_header X-Content-Type-Options $content_type_options always;
       add_header X-XSS-Protection $xss_protection always;
 
-      # Don't add a `Content-Type` header if the response length is 0,
-      # e.g. 204/304 status codes
-      if ( $upstream_response_length != 0 ) {
-        add_header Content-Type $default_content_type always;
-      }
-
       # Clear X-Frame-Options before setting so that ALLOWALL is cleared if set
       more_clear_headers X-Frame-Options;
       more_set_headers "X-Frame-Options: $frame_options";
@@ -200,6 +194,14 @@ http {
       ##
 
       access_by_lua_block {
+        # Don't add a `Content-Type` header if the response length is 0,
+        # e.g. 204/304 status codes
+        if ngx.var.upstream_response_length > 0 then
+          ngx.req.set_header("Content-Type", ngx.var.default_content_type)
+        else
+          ngx.log(ngx.NOTICE, "Content-Type header not added for host ", ngx.var.host, "and request URI ", ngx.var.request_uri , "with a response body length of 0")
+        end
+
         -- bail fast if we don't have a whitelist
         if ip_whitelist_size == 0 then
           return
@@ -285,12 +287,6 @@ server {
     add_header X-Content-Type-Options $content_type_options always;
     add_header X-XSS-Protection $xss_protection always;
     
-    # Don't add a `Content-Type` header if the response length is 0,
-    # e.g. 204/304 status codes
-    if ( $upstream_response_length != 0 ) {
-      add_header Content-Type $default_content_type always;
-    }
-
     # Clear X-Frame-Options before setting so that ALLOWALL is cleared if set
     more_clear_headers X-Frame-Options;
     more_set_headers "X-Frame-Options: $frame_options";
@@ -305,6 +301,14 @@ server {
     ##
 
     access_by_lua_block {
+      # Don't add a `Content-Type` header if the response length is 0,
+      # e.g. 204/304 status codes
+      if ngx.var.upstream_response_length > 0 then
+        ngx.req.set_header("Content-Type", ngx.var.default_content_type)
+      else
+        ngx.log(ngx.NOTICE, "Content-Type header not added for host ", ngx.var.host, "and request URI ", ngx.var.request_uri , "with a response body length of 0")
+      end
+
       -- bail fast if we don't have a whitelist
       if ip_whitelist_size == 0 then
         return
