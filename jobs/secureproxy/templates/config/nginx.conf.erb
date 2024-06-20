@@ -194,8 +194,6 @@ http {
       ##
 
       access_by_lua_block {
-        # Don't add a `Content-Type` header if the response length is 0,
-        # e.g. 204/304 status codes
         if ngx.var.upstream_response_length > 0 then
           ngx.req.set_header("Content-Type", ngx.var.default_content_type)
         else
@@ -301,8 +299,6 @@ server {
     ##
 
     access_by_lua_block {
-      # Don't add a `Content-Type` header if the response length is 0,
-      # e.g. 204/304 status codes
       if ngx.var.upstream_response_length > 0 then
         ngx.req.set_header("Content-Type", ngx.var.default_content_type)
       else
