@@ -194,9 +194,8 @@ http {
       ##
 
       access_by_lua_block {
-        # Don't add a `Content-Type` header if the response length is 0,
-        # e.g. 204/304 status codes
-        if ngx.var.upstream_response_length > 0 then
+        ngx.log(ngx.NOTICE, "Upstream response length ", ngx.var.upstream_response_length, " for host ", ngx.var.host, "and request URI ", ngx.var.request_uri)
+        if tonumber(ngx.var.upstream_response_length) > 0 then
           ngx.req.set_header("Content-Type", ngx.var.default_content_type)
         else
           ngx.log(ngx.NOTICE, "Content-Type header not added for host ", ngx.var.host, "and request URI ", ngx.var.request_uri , "with a response body length of 0")
@@ -301,9 +300,8 @@ server {
     ##
 
     access_by_lua_block {
-      # Don't add a `Content-Type` header if the response length is 0,
-      # e.g. 204/304 status codes
-      if ngx.var.upstream_response_length > 0 then
+      ngx.log(ngx.NOTICE, "Upstream response length ", ngx.var.upstream_response_length, " for host ", ngx.var.host, "and request URI ", ngx.var.request_uri)
+      if tonumber(ngx.var.upstream_response_length) > 0 then
         ngx.req.set_header("Content-Type", ngx.var.default_content_type)
       else
         ngx.log(ngx.NOTICE, "Content-Type header not added for host ", ngx.var.host, "and request URI ", ngx.var.request_uri , "with a response body length of 0")
