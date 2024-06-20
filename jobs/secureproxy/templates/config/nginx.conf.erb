@@ -105,7 +105,7 @@ http {
     '' 'text/plain; charset=utf-8';
   }
   map $upstream_status $mapped_content_type {
-    default '$default_content_type'
+    default '$default_content_type';
     '204' '';
     '304' '';
   }
