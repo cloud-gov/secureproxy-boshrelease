@@ -195,6 +195,14 @@ http {
       ##
 
       access_by_lua_block {
+        ngx.log(ngx.NOTICE, "Upstream response length ", ngx.var.upstream_response_length, " for host ", ngx.var.host, "and request URI ", ngx.var.request_uri)
+        if ngx.var.upstream_status == "204" then
+          ngx.log(ngx.NOTICE, "Content-Type header not added for host ", ngx.var.host, "and request URI ", ngx.var.request_uri , "with a response body length of 0")
+        else
+          ngx.req.set_header("Content-Type", ngx.var.default_content_type)
+        end
+        ngx.req.set_header("foo", "bar")
+
         -- bail fast if we don't have a whitelist
         if ip_whitelist_size == 0 then
           return
@@ -295,6 +303,14 @@ server {
     ##
 
     access_by_lua_block {
+      ngx.log(ngx.NOTICE, "Upstream response length ", ngx.var.upstream_response_length, " for host ", ngx.var.host, "and request URI ", ngx.var.request_uri)
+      if ngx.var.upstream_status == "204" then
+        ngx.log(ngx.NOTICE, "Content-Type header not added for host ", ngx.var.host, "and request URI ", ngx.var.request_uri , "with a response body length of 0")
+      else
+        ngx.req.set_header("Content-Type", ngx.var.default_content_type)
+      end
+      ngx.req.set_header("foo", "bar")
+
       -- bail fast if we don't have a whitelist
       if ip_whitelist_size == 0 then
         return
