@@ -284,7 +284,7 @@ server {
     add_header Strict-Transport-Security $sts always;
     add_header X-Content-Type-Options $content_type_options always;
     add_header X-XSS-Protection $xss_protection always;
-    add_header Content-Type $mapped_content_type always;
+    add_header Content-Type $default_content_type always;
     
     # Clear X-Frame-Options before setting so that ALLOWALL is cleared if set
     more_clear_headers X-Frame-Options;
