@@ -1,7 +1,7 @@
 user  vcap vcap;
 worker_processes 4;
 
-error_log /var/vcap/sys/log/secureproxy/secureproxy.error.log notice;
+error_log /var/vcap/sys/log/secureproxy/secureproxy.error.log info;
 pid       /var/vcap/sys/run/secureproxy/secureproxy.pid;
 
 worker_rlimit_nofile 40000;
@@ -184,7 +184,6 @@ http {
       add_header Strict-Transport-Security $sts always;
       add_header X-Content-Type-Options $content_type_options always;
       add_header X-XSS-Protection $xss_protection always;
-      add_header Content-Type $default_content_type always;
 
       # Clear X-Frame-Options before setting so that ALLOWALL is cleared if set
       more_clear_headers X-Frame-Options;
@@ -200,6 +199,13 @@ http {
       ##
 
       access_by_lua_block {
+        ngx.log(ngx.INFO, "Upstream response length ", ngx.var.upstream_response_length, " for host ", ngx.var.host, "and request URI ", ngx.var.request_uri)
+        if tonumber(ngx.var.upstream_response_length) > 0 then
+          ngx.req.set_header("Content-Type", ngx.var.default_content_type)
+        else
+          ngx.log(ngx.INFO, "Content-Type header not added for host ", ngx.var.host, "and request URI ", ngx.var.request_uri , "with a response body length of 0")
+        end
+
         -- bail fast if we don't have a whitelist
         if ip_whitelist_size == 0 then
           return
@@ -284,7 +290,6 @@ server {
     add_header Strict-Transport-Security $sts always;
     add_header X-Content-Type-Options $content_type_options always;
     add_header X-XSS-Protection $xss_protection always;
-    add_header Content-Type $default_content_type always;
     
     # Clear X-Frame-Options before setting so that ALLOWALL is cleared if set
     more_clear_headers X-Frame-Options;
@@ -300,6 +305,15 @@ server {
     ##
 
     access_by_lua_block {
+      ngx.log(ngx.INFO, "Mapped content type ", ngx.var.mapped_content_type, " for host ", ngx.var.host, "and request URI ", ngx.var.request_uri)
+
+      ngx.log(ngx.INFO, "Upstream response length ", ngx.var.upstream_response_length, " for host ", ngx.var.host, "and request URI ", ngx.var.request_uri)
+      if tonumber(ngx.var.upstream_response_length) > 0 then
+        ngx.req.set_header("Content-Type", ngx.var.default_content_type)
+      else
+        ngx.log(ngx.INFO, "Content-Type header not added for host ", ngx.var.host, "and request URI ", ngx.var.request_uri , "with a response body length of 0")
+      end
+
       -- bail fast if we don't have a whitelist
       if ip_whitelist_size == 0 then
         return
