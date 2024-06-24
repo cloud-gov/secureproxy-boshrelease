@@ -18,4 +18,3 @@ blobs/*
 tmp
 my*.yml
 credentials.yml
-nginx*.conf
