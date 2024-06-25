@@ -1,7 +1,7 @@
 user  vcap vcap;
 worker_processes 4;
 
-error_log /var/vcap/sys/log/secureproxy/secureproxy.error.log info;
+error_log /var/vcap/sys/log/secureproxy/secureproxy.error.log notice;
 pid       /var/vcap/sys/run/secureproxy/secureproxy.pid;
 
 worker_rlimit_nofile 40000;
@@ -293,10 +293,6 @@ server {
     add_header Content-Type $mapped_content_type always;
 
     header_filter_by_lua_block {
-      ngx.log(ngx.INFO, "Upstream content type: ", ngx.var.upstream_http_content_type)
-      ngx.log(ngx.INFO, "Default content type: ", ngx.var.default_content_type)
-      ngx.log(ngx.INFO, "Mapped content type ", ngx.var.mapped_content_type)
-      
       if ngx.var.upstream_http_content_type == nil and ngx.var.mapped_content_type == "" then
         ngx.log(ngx.INFO, "no Content-Type header")
       end
