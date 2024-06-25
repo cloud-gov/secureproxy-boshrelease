@@ -104,6 +104,11 @@ http {
   map $upstream_http_content_type $default_content_type {
     '' 'text/plain; charset=utf-8';
   }
+  map $upstream_status $mapped_content_type {
+    default '$default_content_type';
+    '204' '';
+    '304' '';
+  }
 
   <% if p('secureproxy.csp.enable') %>
   # right now, we're doing this with report-only. later, we'll drop report-only and move to enforce with report
@@ -179,7 +184,7 @@ http {
       add_header Strict-Transport-Security $sts always;
       add_header X-Content-Type-Options $content_type_options always;
       add_header X-XSS-Protection $xss_protection always;
-      add_header Content-Type $default_content_type always;
+      add_header Content-Type $mapped_content_type always;
 
       # Clear X-Frame-Options before setting so that ALLOWALL is cleared if set
       more_clear_headers X-Frame-Options;
@@ -189,6 +194,12 @@ http {
       more_clear_headers <%= csp_header %>;
       more_set_headers "<%= csp_header %>: $content_security_policy";
       <% end %>
+
+      header_filter_by_lua_block {
+        if ngx.var.upstream_http_content_type == nil and ngx.var.mapped_content_type == "" then
+          ngx.log(ngx.INFO, "no Content-Type header")
+        end
+      }
 
       ##
       # Implement per-domain IP Whitelist
@@ -279,7 +290,13 @@ server {
     add_header Strict-Transport-Security $sts always;
     add_header X-Content-Type-Options $content_type_options always;
     add_header X-XSS-Protection $xss_protection always;
-    add_header Content-Type $default_content_type always;
+    add_header Content-Type $mapped_content_type always;
+
+    header_filter_by_lua_block {
+      if ngx.var.upstream_http_content_type == nil and ngx.var.mapped_content_type == "" then
+        ngx.log(ngx.INFO, "no Content-Type header")
+      end
+    }
     
     # Clear X-Frame-Options before setting so that ALLOWALL is cleared if set
     more_clear_headers X-Frame-Options;

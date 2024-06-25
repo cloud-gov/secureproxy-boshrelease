@@ -1,0 +1,21 @@
+services:
+  openresty:
+    image: openresty/openresty:1.21.4.1-0-jammy
+    container_name: openresty
+    ports:
+      - 8081:8081
+    volumes:
+      - ./nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
+    expose:
+      - "8081"
+  node:
+    build:
+      context: ./node
+    container_name: node
+    volumes:
+      - ./node/web.js:/usr/src/app/web.js
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+    ports:
+      - 3000:3000
