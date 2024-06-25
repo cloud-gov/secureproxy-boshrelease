@@ -196,9 +196,9 @@ http {
       <% end %>
 
       header_filter_by_lua_block {
-        ngx.log(ngx.INFO, "upstream_status: ", ngx.var.upstream_status,  " host: ", ngx.var.host, " ,request URI ", ngx.var.request_uri)
-        ngx.log(ngx.INFO, "Default content type ", ngx.var.default_content_type, " host: ", ngx.var.host, " ,request URI ", ngx.var.request_uri)
-        ngx.log(ngx.INFO, "Mapped content type ", ngx.var.mapped_content_type, " host: ", ngx.var.host, " ,request URI ", ngx.var.request_uri)
+        if ngx.var.upstream_http_content_type == nil and ngx.var.mapped_content_type == "" then
+          ngx.log(ngx.INFO, "no Content-Type header")
+        end
       }
 
       ##
@@ -293,9 +293,9 @@ server {
     add_header Content-Type $mapped_content_type always;
 
     header_filter_by_lua_block {
-      ngx.log(ngx.INFO, "upstream_status: ", ngx.var.upstream_status,  " host: ", ngx.var.host, " ,request URI ", ngx.var.request_uri)
-      ngx.log(ngx.INFO, "Default content type ", ngx.var.default_content_type, " host: ", ngx.var.host, " ,request URI ", ngx.var.request_uri)
-      ngx.log(ngx.INFO, "Mapped content type ", ngx.var.mapped_content_type, " host: ", ngx.var.host, " ,request URI ", ngx.var.request_uri)
+      if ngx.var.upstream_http_content_type == nil and ngx.var.mapped_content_type == "" then
+        ngx.log(ngx.INFO, "no Content-Type header")
+      end
     }
     
     # Clear X-Frame-Options before setting so that ALLOWALL is cleared if set
