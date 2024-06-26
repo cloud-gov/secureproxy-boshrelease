@@ -197,7 +197,7 @@ http {
 
       header_filter_by_lua_block {
         if ngx.var.upstream_http_content_type == nil and ngx.var.mapped_content_type == "" then
-          ngx.log(ngx.INFO, "no Content-Type header")
+          ngx.log(ngx.NOTICE, "no Content-Type header was mapped for upstream status code ", ngx.var.upstream_status)
         end
       }
 
@@ -294,7 +294,7 @@ server {
 
     header_filter_by_lua_block {
       if ngx.var.upstream_http_content_type == nil and ngx.var.mapped_content_type == "" then
-        ngx.log(ngx.INFO, "no Content-Type header")
+        ngx.log(ngx.NOTICE, "no Content-Type header was mapped for upstream status code ", ngx.var.upstream_status)
       end
     }
     
