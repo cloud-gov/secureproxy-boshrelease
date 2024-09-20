@@ -40,6 +40,8 @@ jobs:
             region: ((s3-bosh-blobstore-info.region))
             bucket_name: ((s3-bosh-blobstore-info.bucket_name))
             credentials_source: ((s3-bosh-blobstore-info.credentials_source))
+            host: s3-fips.((aws-region)).amazonaws.com
+
   - in_parallel:
     - put: secureproxy-release-tarball
       tags: [iaas]
@@ -76,6 +78,7 @@ resources:
     regexp: secureproxy-(.*).tgz
     region_name: ((aws-region))
     server_side_encryption: AES256
+    endpoint: s3-fips.((aws-region)).amazonaws.com
 
 - name: secureproxy-final-builds-dir-tarball
   type: s3-iam
@@ -84,6 +87,7 @@ resources:
     versioned_file: final-builds-dir-secureproxy.tgz
     region_name: ((aws-region))
     server_side_encryption: AES256
+    endpoint: s3-fips.((aws-region)).amazonaws.com
 
 - name: secureproxy-releases-dir-tarball
   type: s3-iam
@@ -92,6 +96,7 @@ resources:
     versioned_file: releases-dir-secureproxy.tgz
     region_name: ((aws-region))
     server_side_encryption: AES256
+    endpoint: s3-fips.((aws-region)).amazonaws.com
 
 resource_types:
 - name: registry-image
