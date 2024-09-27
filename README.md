@@ -12,7 +12,7 @@ nginx is configured to do the following:
 
 To use this BOSH release, first upload it to your BOSH:
 
-```
+```shell
 bosh target BOSH_HOST
 git clone https://github.com/cloud-gov/cg-secureproxy-boshrelease.git
 cd cg-secureproxy-boshrelease
@@ -21,7 +21,7 @@ bosh upload release releases/secureproxy/secureproxy-5.yml
 
 Then add the properties to your manifest file, and add the secureproxy release to the releases section:
 
-```
+```yaml
 properties:
   ...
   secureproxy:
@@ -34,7 +34,8 @@ releases:
 ```
 
 Change the port the router runs on:
-```
+
+```yaml
 properties:
   ...
   router:
@@ -43,7 +44,7 @@ properties:
 
 Finally add the `secureproxy` template to your job:
 
-```
+```yaml
 - instances: 1
   name: router_z1
   ...
