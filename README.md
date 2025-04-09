@@ -1,4 +1,4 @@
-# BOSH Release for 18F Cloud Foundry Secure Proxy
+# BOSH Release for cloud-gov Cloud Foundry Secure Proxy
 
 This proxy adds an nginx layer on top of Cloud Foundry, proxying all requests made to the router.
 
