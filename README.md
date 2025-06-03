@@ -4,7 +4,7 @@ This proxy adds an nginx layer on top of Cloud Foundry, proxying all requests ma
 
 nginx is configured to do the following:
 
-- Add `X-Frame-Options`, `X-Content-Type-Options`, `X-XSS-Protection` and `Strict-Transport-Security` headers
+- Add `X-Frame-Options`, `X-Content-Type-Options` and `Strict-Transport-Security` headers
 - Redirect HTTP traffic to HTTPS
 - Set limits on timeouts and body sizes
 
