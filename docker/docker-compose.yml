@@ -1,6 +1,6 @@
 services:
   openresty:
-    image: openresty/openresty:1.31.8.1
+    image: openresty/openresty:1.21.4.1-0-jammy
     container_name: openresty
     ports:
       - 8081:8081
